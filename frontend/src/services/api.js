@@ -1,9 +1,7 @@
 // api.js
 import axios from "axios";
 
-const API_URL = `${
-  import.meta.env.VITE_API_URL || "http://localhost:5000/api"   
-}`;
+const API_URL = `${import.meta.env.VITE_API_URL}/api`;
 
 // Create axios instance with base configuration
 const api = axios.create({
@@ -91,20 +89,19 @@ export const fetchResultFormatByStandard = async (standard, academicYear) => {
   }
 };
 
-
 // Student API calls
 export const getStudents = async (filters = {}) => {
   try {
     const { standard, search } = filters;
     let queryParams = new URLSearchParams();
-    
-    if (standard) queryParams.append('standard', standard);
-    if (search) queryParams.append('search', search);
-    
+
+    if (standard) queryParams.append("standard", standard);
+    if (search) queryParams.append("search", search);
+
     const response = await api.get(`/students?${queryParams}`);
     return response.data;
   } catch (error) {
-    console.error('Error fetching students:', error);
+    console.error("Error fetching students:", error);
     throw error;
   }
 };
@@ -114,17 +111,17 @@ export const getStudentById = async (id) => {
     const response = await api.get(`/students/${id}`);
     return response.data;
   } catch (error) {
-    console.error('Error fetching student details:', error);
+    console.error("Error fetching student details:", error);
     throw error;
   }
 };
 
 export const createStudent = async (studentData) => {
   try {
-    const response = await api.post('/students', studentData);
+    const response = await api.post("/students", studentData);
     return response.data;
   } catch (error) {
-    console.error('Error creating student:', error);
+    console.error("Error creating student:", error);
     throw error;
   }
 };
@@ -134,7 +131,7 @@ export const updateStudent = async (id, studentData) => {
     const response = await api.put(`/students/${id}`, studentData);
     return response.data;
   } catch (error) {
-    console.error('Error updating student:', error);
+    console.error("Error updating student:", error);
     throw error;
   }
 };
@@ -144,7 +141,7 @@ export const deleteStudent = async (id) => {
     const response = await api.delete(`/students/${id}`);
     return response.data;
   } catch (error) {
-    console.error('Error deleting student:', error);
+    console.error("Error deleting student:", error);
     throw error;
   }
 };
@@ -201,10 +198,9 @@ export const downloadStudentResult = async (studentId) => {
   }
 };
 
-
 // Add request interceptor for auth token
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -212,10 +208,8 @@ api.interceptors.request.use((config) => {
 });
 
 export const authAPI = {
-  login: (credentials) => api.post('/auth/login', credentials),
-  verify: () => api.post('/auth/verify'),
+  login: (credentials) => api.post("/auth/login", credentials),
+  verify: () => api.post("/auth/verify"),
 };
-
-
 
 export default api;
