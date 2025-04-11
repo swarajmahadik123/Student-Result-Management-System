@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @font-face {
+            font-family: 'NotoSansDevanagari';
+            src: url('file://{{fontPath}}/NotoSansDevanagari-Regular.ttf');
+        }
+
+        body {
+            font-family: 'NotoSansDevanagari';
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .school-info {
+            text-align: center;
+            flex-grow: 1;
+        }
+
+        .student-info {
+            margin: 20px 0;
+        }
+
+        .measurement-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .measurement-table th, 
+        .measurement-table td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .checkbox-activity {
+            margin: 10px 0;
+            page-break-inside: avoid;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="file://{{logoPath}}" width="80">
+        <div class="school-info">
+            <h2>श्रीनिधी एज्युकेशन सोसायटी</h2>
+            <h3>हिंदवी पब्लिक स्कूल सातारा</h3>
+            <h3>कोशनिहाय प्रगती {{academicYear}}</h3>
+        </div>
+    </div>
+
+    <div class="student-info">
+        <h4>{{genderLabel}}चे नाव: {{studentName}}</h4>
+        <h4>इयत्ता: {{standard}}</h4>
+    </div>
+
+    <!-- Physical Measurements Table -->
+    <table class="measurement-table">
+        <thead>
+            <tr>
+                <th>मापन</th>
+                <th>सत्र १</th>
+                <th>सत्र २</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each physicalMeasurements}}
+            <tr>
+                <td>{{name}}</td>
+                <td>{{session1}}</td>
+                <td>{{session2}}</td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+
+    <!-- Checkbox Activities -->
+    {{#each koshaSections}}
+    <div class="checkbox-activity">
+        <h4>{{title}}</h4>
+        {{#each items}}
+        <div>{{#if isPresent}}✓{{else}}□{{/if}} {{name}}</div>
+        {{/each}}
+    </div>
+    {{/each}}
+
+    <!-- Academic Results Table -->
+    <table class="measurement-table">
+        <thead>
+            <tr>
+                <th>विषय</th>
+                <th>युनिट १</th>
+                <th>सेमिस्टर १</th>
+                <th>युनिट २</th>
+                <th>टर्मिनल</th>
+                <th>ग्रेड</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each academicResults}}
+            <tr>
+                <td>{{label}}</td>
+                <td>{{unit1.obtained}}/{{unit1.total}}</td>
+                <td>{{semester1.obtained}}/{{semester1.total}}</td>
+                <td>{{unit2.obtained}}/{{unit2.total}}</td>
+                <td>{{terminal.obtained}}/{{terminal.total}}</td>
+                <td>{{grade}}</td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+
+    <!-- Signatures -->
+    <div style="margin-top: 40px; page-break-before: always;">
+        <div style="float: left; width: 33%; text-align: center">
+            शिक्षक स्वाक्षरी
+        </div>
+        <div style="float: left; width: 33%; text-align: center">
+            पालक स्वाक्षरी
+        </div>
+        <div style="float: left; width: 33%; text-align: center">
+            मुख्याध्यापक स्वाक्षरी
+        </div>
+    </div>
+</body>
+</html>
