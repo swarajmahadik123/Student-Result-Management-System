@@ -1,20 +1,33 @@
-# Use official Node image
-FROM node:18
+# Use official Node.js image
+FROM node:18-slim
 
-# Create app directory
+# Install Chromium and dependencies
+RUN apt-get update && \
+    apt-get install -y \
+    chromium \
+    fonts-indic \
+    fonts-noto-cjk \
+    fonts-freefont-ttf \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
 WORKDIR /app
 
-# Install app dependencies
+# Copy package files first for better caching
 COPY package*.json ./
+
+# Install dependencies
 RUN npm install
 
-# Copy the rest of the app
+# Copy all source files
 COPY . .
 
-# Expose port your app runs on
+# Set environment variables for Puppeteer
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
+ENV NODE_ENV=production
+
+# Expose the port your app runs on
 EXPOSE 3000
 
-# Start your server
-CMD ["npm", "start"]
+# Command to run your application
 CMD ["node", "server.js"]
-CMD ["nodemon", "server.js"]
