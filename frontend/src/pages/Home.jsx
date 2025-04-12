@@ -1,8 +1,30 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { gurukulLogo, hindaviLogo, logo } from "../assets/images";
+import { authAPI } from "../services/api";
 
 const Home = () => {
+ const [userRole, setUserRole] = useState(null);
+    useEffect(() => {
+      const checkAuth = async () => {
+        try {
+          const { data } = await authAPI.verify();
+          setUserRole(data.role);
+        } catch (error) {
+          console.log("User not logged in or error verifying auth");
+          setUserRole(null);
+        }
+      };
+
+      checkAuth();
+    }, []);
+
+    // Function to determine dashboard path based on role
+    const getDashboardPath = () => {
+      if (userRole === "hindavi") return "/dashboard-hindavi";
+      if (userRole === "gurukul") return "/dashboard-gurukul";
+      return "/login"; // Default to login if no role or not logged in
+    };
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-purple-50 overflow-x-hidden font-['Poppins']">
       {/* Navigation - Modern Glass Morphism */}
@@ -32,8 +54,8 @@ const Home = () => {
                 )
               )}
               <Link
-                to="/dashboard"
-                className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 hover:shadow-lg hover:shadow-purple-200 hover:scale-105"
+                to={getDashboardPath()}
+                className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-8 py-3 rounded-full text-sm font-medium transition-all duration-300 hover:shadow-lg hover:shadow-purple-200 hover:scale-105"
               >
                 डॅशबोर्ड
               </Link>

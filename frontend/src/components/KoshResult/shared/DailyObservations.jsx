@@ -9,9 +9,7 @@ const DailyObservations = ({ observations, rformat, onUpdate, isEditing }) => {
   useEffect(() => {
     setLocalObservations(observations);
   }, [observations]);
-  console.log("Local Observations:", localObservations);
-  console.log("Observations:", observations);
-  console.log("Rformat:", rformat);
+  
 
   const handleObservationSelect = (observationId, selectedOption) => {
     if (!isEditing) return;

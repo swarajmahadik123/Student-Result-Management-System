@@ -168,7 +168,6 @@ export const downloadStudentResult = async (studentId) => {
         Pragma: "no-cache",
       },
     });
-
     // Validate response
     if (!(response.data instanceof Blob)) {
       throw new Error("Invalid PDF response from server");

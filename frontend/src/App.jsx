@@ -62,14 +62,7 @@ const App = () => (
         <Routes>
           <Route path="/login" element={<LoginForm />} />
           <Route path="/" element={<Home />} />
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute role="hindavi">
-                <Index />
-              </ProtectedRoute>
-            }
-          />
+          
           <Route
             path="/dashboard-hindavi"
             element={

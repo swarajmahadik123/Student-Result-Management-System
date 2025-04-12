@@ -5,7 +5,6 @@ import { authAPI } from "../services/api";
 const ProtectedRoute = ({ role, children }) => {
   const [verified, setVerified] = useState(false);
   const navigate = useNavigate();
- console.log("role", role);
   useEffect(() => {
     const verifyAuth = async () => {
       try {
