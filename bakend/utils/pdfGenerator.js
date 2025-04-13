@@ -468,24 +468,24 @@ const generateHTML = (studentData) => {
         <div class="page-content">
           <img src="${watermarkLogo}" class="watermark" alt="Watermark">
           <div class="section-container">
-            <h2 class="section-title">प्राणमयकोश - प्राणिक विकसन (दृश्य नसणारे  स्थूल रूप)</h2>
+            <h2 class="section-title">प्राणमयकोश – प्राणिक (दृश्य नसणारे  स्थूल रूप)</h2>
   `;
 
- if (result?.pranamayaKosha) {
-   // Function to convert numbers to Marathi digits
-   const toMarathiDigits = (num) => {
-     const marathiDigits = ["०", "१", "२", "३", "४", "५", "६", "७", "८", "९"];
-     return num
-       .toString()
-       .split("")
-       .map((d) => marathiDigits[parseInt(d)])
-       .join("");
-   };
+  if (result?.pranamayaKosha) {
+    // Function to convert numbers to Marathi digits
+    const toMarathiDigits = (num) => {
+      const marathiDigits = ["०", "१", "२", "३", "४", "५", "६", "७", "८", "९"];
+      return num
+        .toString()
+        .split("")
+        .map((d) => marathiDigits[parseInt(d)])
+        .join("");
+    };
 
-   // Chhandavarga (Hobby Classes)
-   if (result.pranamayaKosha.chhandavarga) {
-     htmlContent += `
-        <div class="section-title">छंदवर्ग</div>
+    // Chhandavarga (Hobby Classes)
+    if (result.pranamayaKosha.chhandavarga) {
+      htmlContent += `
+        <div class="section-title">छंदवर्ग </div>
         <table>
           <thead>
             <tr>
@@ -499,68 +499,68 @@ const generateHTML = (studentData) => {
               <td style="vertical-align: top;">
       `;
 
-     // Music
-     if (result.pranamayaKosha.chhandavarga.music?.length > 0) {
-       let presentCount = 0;
-       result.pranamayaKosha.chhandavarga.music.forEach((item) => {
-         if (item.isPresent) {
-           presentCount++;
-           htmlContent += `<div class="checked-item">${toMarathiDigits(
-             presentCount
-           )}. ${item.name}</div>`;
-         }
-       });
-     }
+      // Music
+      if (result.pranamayaKosha.chhandavarga.music?.length > 0) {
+        let presentCount = 0;
+        result.pranamayaKosha.chhandavarga.music.forEach((item) => {
+          if (item.isPresent) {
+            presentCount++;
+            htmlContent += `<div class="checked-item">${toMarathiDigits(
+              presentCount
+            )}. ${item.name}</div>`;
+          }
+        });
+      }
 
-     htmlContent += `
+      htmlContent += `
               </td>
               <td style="vertical-align: top;">
       `;
 
-     // Computer
-     if (result.pranamayaKosha.chhandavarga.computer?.length > 0) {
-       let presentCount = 0;
-       result.pranamayaKosha.chhandavarga.computer.forEach((item) => {
-         if (item.isPresent) {
-           presentCount++;
-           htmlContent += `<div class="checked-item">${toMarathiDigits(
-             presentCount
-           )}. ${item.name}</div>`;
-         }
-       });
-     }
+      // Computer
+      if (result.pranamayaKosha.chhandavarga.computer?.length > 0) {
+        let presentCount = 0;
+        result.pranamayaKosha.chhandavarga.computer.forEach((item) => {
+          if (item.isPresent) {
+            presentCount++;
+            htmlContent += `<div class="checked-item">${toMarathiDigits(
+              presentCount
+            )}. ${item.name}</div>`;
+          }
+        });
+      }
 
-     htmlContent += `
+      htmlContent += `
               </td>
               <td style="vertical-align: top;">
       `;
 
-     // Art
-     if (result.pranamayaKosha.chhandavarga.art?.length > 0) {
-       let presentCount = 0;
-       result.pranamayaKosha.chhandavarga.art.forEach((item) => {
-         if (item.isPresent) {
-           presentCount++;
-           htmlContent += `<div class="checked-item">${toMarathiDigits(
-             presentCount
-           )}. ${item.name}</div>`;
-         }
-       });
-     }
+      // Art
+      if (result.pranamayaKosha.chhandavarga.art?.length > 0) {
+        let presentCount = 0;
+        result.pranamayaKosha.chhandavarga.art.forEach((item) => {
+          if (item.isPresent) {
+            presentCount++;
+            htmlContent += `<div class="checked-item">${toMarathiDigits(
+              presentCount
+            )}. ${item.name}</div>`;
+          }
+        });
+      }
 
-     htmlContent += `
+      htmlContent += `
               </td>
             </tr>
           </tbody>
         </table>
       `;
-   }
+    }
 
-   // Yogabhyas and Pathantar side by side
-   htmlContent += `<div class="yogabhyas-pathantar-container">`;
+    // Yogabhyas and Pathantar side by side
+    htmlContent += `<div class="yogabhyas-pathantar-container">`;
 
-   // Yogabhyas - Now with 3 columns
-   htmlContent += `
+    // Yogabhyas - Now with 3 columns
+    htmlContent += `
       <div>
         <div class="section-title">योगाभ्यास</div>
         <div class="yogabhyas-container">
@@ -568,65 +568,65 @@ const generateHTML = (studentData) => {
             <div class="yogabhyas-header">आसन (१-१०)</div>
     `;
 
-   // Asanas 1-10
-   if (result.pranamayaKosha.yogabhyas?.asanas?.length > 0) {
-     let presentCount = 0;
-     result.pranamayaKosha.yogabhyas.asanas.slice(0, 10).forEach((item) => {
-       if (item.isPresent) {
-         presentCount++;
-         htmlContent += `<div class="yogabhyas-item checked-item">${toMarathiDigits(
-           presentCount
-         )}. ${item.name}</div>`;
-       }
-     });
-   }
+    // Asanas 1-10
+    if (result.pranamayaKosha.yogabhyas?.asanas?.length > 0) {
+      let presentCount = 0;
+      result.pranamayaKosha.yogabhyas.asanas.slice(0, 10).forEach((item) => {
+        if (item.isPresent) {
+          presentCount++;
+          htmlContent += `<div class="yogabhyas-item checked-item">${toMarathiDigits(
+            presentCount
+          )}. ${item.name}</div>`;
+        }
+      });
+    }
 
-   htmlContent += `
+    htmlContent += `
           </div>
           <div class="yogabhyas-column">
             <div class="yogabhyas-header">आसन (११-२०)</div>
     `;
 
-   // Asanas 11-20
-   if (result.pranamayaKosha.yogabhyas?.asanas?.length > 10) {
-     let presentCount = 10;
-     result.pranamayaKosha.yogabhyas.asanas.slice(10).forEach((item) => {
-       if (item.isPresent) {
-         presentCount++;
-         htmlContent += `<div class="yogabhyas-item checked-item">${toMarathiDigits(
-           presentCount
-         )}. ${item.name}</div>`;
-       }
-     });
-   }
+    // Asanas 11-20
+    if (result.pranamayaKosha.yogabhyas?.asanas?.length > 10) {
+      let presentCount = 10;
+      result.pranamayaKosha.yogabhyas.asanas.slice(10).forEach((item) => {
+        if (item.isPresent) {
+          presentCount++;
+          htmlContent += `<div class="yogabhyas-item checked-item">${toMarathiDigits(
+            presentCount
+          )}. ${item.name}</div>`;
+        }
+      });
+    }
 
-   htmlContent += `
+    htmlContent += `
           </div>
           <div class="yogabhyas-column">
             <div class="yogabhyas-header">प्राणायाम</div>
     `;
 
-   // Pranayam
-   if (result.pranamayaKosha.yogabhyas?.pranayam?.length > 0) {
-     let presentCount = 0;
-     result.pranamayaKosha.yogabhyas.pranayam.forEach((item) => {
-       if (item.isPresent) {
-         presentCount++;
-         htmlContent += `<div class="yogabhyas-item checked-item">${toMarathiDigits(
-           presentCount
-         )}. ${item.name}</div>`;
-       }
-     });
-   }
+    // Pranayam
+    if (result.pranamayaKosha.yogabhyas?.pranayam?.length > 0) {
+      let presentCount = 0;
+      result.pranamayaKosha.yogabhyas.pranayam.forEach((item) => {
+        if (item.isPresent) {
+          presentCount++;
+          htmlContent += `<div class="yogabhyas-item checked-item">${toMarathiDigits(
+            presentCount
+          )}. ${item.name}</div>`;
+        }
+      });
+    }
 
-   htmlContent += `
+    htmlContent += `
           </div>
         </div>
       </div>
     `;
 
-   // Pathantar - 2 columns
-   htmlContent += `
+    // Pathantar - 2 columns
+    htmlContent += `
       <div>
         <div class="section-title">पाठांतर</div>
         <div class="pathantar-columns">
@@ -635,20 +635,20 @@ const generateHTML = (studentData) => {
             <div class="pathantar-content">
     `;
 
-   // Sanskrit Pathantar
-   if (result.pranamayaKosha.pathantar?.sanskrit?.length > 0) {
-     let presentCount = 0;
-     result.pranamayaKosha.pathantar.sanskrit.forEach((item) => {
-       if (item.isPresent) {
-         presentCount++;
-         htmlContent += `<div class="checked-item">${toMarathiDigits(
-           presentCount
-         )}. ${item.name}</div>`;
-       }
-     });
-   }
+    // Sanskrit Pathantar
+    if (result.pranamayaKosha.pathantar?.sanskrit?.length > 0) {
+      let presentCount = 0;
+      result.pranamayaKosha.pathantar.sanskrit.forEach((item) => {
+        if (item.isPresent) {
+          presentCount++;
+          htmlContent += `<div class="checked-item">${toMarathiDigits(
+            presentCount
+          )}. ${item.name}</div>`;
+        }
+      });
+    }
 
-   htmlContent += `
+    htmlContent += `
             </div>
           </div>
           <div class="pathantar-column">
@@ -656,31 +656,31 @@ const generateHTML = (studentData) => {
             <div class="pathantar-content">
     `;
 
-   // Marathi Pathantar
-   if (result.pranamayaKosha.pathantar?.marathi?.length > 0) {
-     let presentCount = 0;
-     result.pranamayaKosha.pathantar.marathi.forEach((item) => {
-       if (item.isPresent) {
-         presentCount++;
-         htmlContent += `<div class="checked-item">${toMarathiDigits(
-           presentCount
-         )}. ${item.name}</div>`;
-       }
-     });
-   }
+    // Marathi Pathantar
+    if (result.pranamayaKosha.pathantar?.marathi?.length > 0) {
+      let presentCount = 0;
+      result.pranamayaKosha.pathantar.marathi.forEach((item) => {
+        if (item.isPresent) {
+          presentCount++;
+          htmlContent += `<div class="checked-item">${toMarathiDigits(
+            presentCount
+          )}. ${item.name}</div>`;
+        }
+      });
+    }
 
-   htmlContent += `
+    htmlContent += `
             </div>
           </div>
         </div>
       </div>
     `;
 
-   htmlContent += `</div>`; // Close yogabhyas-pathantar-container
+    htmlContent += `</div>`; // Close yogabhyas-pathantar-container
 
-   // Daily Observations
-   if (result.pranamayaKosha.dailyObservations?.length > 0) {
-     htmlContent += `
+    // Daily Observations
+    if (result.pranamayaKosha.dailyObservations?.length > 0) {
+      htmlContent += `
         <div class="section-title">दैनंदिन निरीक्षण</div>
         <table class="compact-table">
           <thead>
@@ -692,8 +692,8 @@ const generateHTML = (studentData) => {
           <tbody>
       `;
 
-     result.pranamayaKosha.dailyObservations.forEach((observation) => {
-       htmlContent += `
+      result.pranamayaKosha.dailyObservations.forEach((observation) => {
+        htmlContent += `
           <tr>
             <td style="font-weight: bold; text-align: start;">${
               observation.category
@@ -701,14 +701,14 @@ const generateHTML = (studentData) => {
             <td>${observation.selectedOption || "-"}</td>
           </tr>
         `;
-     });
+      });
 
-     htmlContent += `</tbody></table>`;
-   }
+      htmlContent += `</tbody></table>`;
+    }
 
-   // Annual Activities
-   if (result.pranamayaKosha.annualActivities?.length > 0) {
-     htmlContent += `
+    // Annual Activities
+    if (result.pranamayaKosha.annualActivities?.length > 0) {
+      htmlContent += `
         <div class="section-title">वार्षिक उपक्रम</div>
         <table class="compact-table">
           <thead>
@@ -720,18 +720,18 @@ const generateHTML = (studentData) => {
           <tbody>
       `;
 
-     result.pranamayaKosha.annualActivities.forEach((activity) => {
-       htmlContent += `
+      result.pranamayaKosha.annualActivities.forEach((activity) => {
+        htmlContent += `
           <tr>
             <td style="font-weight: bold;">${activity.name}</td>
             <td>${activity.value || "-"}</td>
           </tr>
         `;
-     });
+      });
 
-     htmlContent += `</tbody></table>`;
-   }
- }
+      htmlContent += `</tbody></table>`;
+    }
+  }
 
   htmlContent += `
           </div>
@@ -813,8 +813,8 @@ const generateHTML = (studentData) => {
     `;
 
     // Subjects (Annual Result Table)
- if (result.vidnyanmayaKosha.subjects?.length > 0) {
-   htmlContent += `
+    if (result.vidnyanmayaKosha.subjects?.length > 0) {
+      htmlContent += `
         <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
             <!-- Subject and Grade Table -->
             <table class="annual-result-table" style="width: 50%; border-collapse: collapse; border: 1px solid black;">
@@ -826,8 +826,8 @@ const generateHTML = (studentData) => {
                 </thead>
                 <tbody>`;
 
-   result.vidnyanmayaKosha.subjects.forEach((subject) => {
-     htmlContent += `
+      result.vidnyanmayaKosha.subjects.forEach((subject) => {
+        htmlContent += `
                     <tr>
                         <td style="text-align: left; padding: 8px; border: 1px solid black;">${
                           subject.label
@@ -836,9 +836,9 @@ const generateHTML = (studentData) => {
                           subject.grade || "-"
                         }</td>
                     </tr>`;
-   });
+      });
 
-   htmlContent += `
+      htmlContent += `
                 </tbody>
             </table>
 
@@ -889,9 +889,7 @@ const generateHTML = (studentData) => {
                 </tbody>
             </table>
         </div>`;
- }
-
-
+    }
 
     // Daily Observations
     if (result.vidnyanmayaKosha.dailyObservations?.length > 0) {
