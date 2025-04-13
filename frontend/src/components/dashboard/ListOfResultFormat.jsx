@@ -75,7 +75,7 @@ const ListOfResultFormat = ({ onSelectFormat }) => {
       animate="visible"
       variants={containerVariants}
     >
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-8xl mx-auto">
         <motion.div
           className="bg-white/80 backdrop-blur-xl shadow-lg rounded-2xl overflow-hidden border border-purple-100/30 p-6"
           variants={itemVariants}

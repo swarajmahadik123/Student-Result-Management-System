@@ -56,7 +56,7 @@ export const generateStudentResultPDF = async (studentData) => {
 };
 
 const generateHTML = (studentData) => {
-  const { name, standard, academicYear, result } = studentData;
+  const { name, standard, academicYear, result, division } = studentData;
 
   // Base64 encoded logos
   const rightLogo =
@@ -351,7 +351,7 @@ const generateHTML = (studentData) => {
                 : "विद्यार्थिनीचे नाव"
             }: ${name || ""}
   </p>
-  <p>इयत्ता: ${standard || ""} वी</p>
+  <p>इयत्ता: ${standard || ""} वी  ${division || ""} </p>
 </div>
 
   `;
@@ -359,7 +359,7 @@ const generateHTML = (studentData) => {
   if (result?.annamayaKosha) {
     htmlContent += `
       <div class="section-container">
-        <h2 class="section-title">अन्नमयकोश - शारीरिक विकसन (समूहाचे स्थूल स्वरूप)</h2>
+        <h2 class="section-title">अन्नमयकोश - शारीरिक विकसन (समूहाचे स्थूल रूप)</h2>
         ${
           result.annamayaKosha.prakruti
             ? `<div class="prakruti">प्रकृती: ${result.annamayaKosha.prakruti}</div>`
@@ -468,7 +468,7 @@ const generateHTML = (studentData) => {
         <div class="page-content">
           <img src="${watermarkLogo}" class="watermark" alt="Watermark">
           <div class="section-container">
-            <h2 class="section-title">प्राणमयकोश - प्राणिक विकसन (हरकत नसणारे स्थूल रूप)</h2>
+            <h2 class="section-title">प्राणमयकोश - प्राणिक विकसन (दृश्य नसणारे  स्थूल रूप)</h2>
   `;
 
  if (result?.pranamayaKosha) {
@@ -743,7 +743,7 @@ const generateHTML = (studentData) => {
         <div class="page-content">
           <img src="${watermarkLogo}" class="watermark" alt="Watermark">
           <div class="section-container">
-            <h2 class="section-title">मनोमयकोश - मानसिक विकसन (प्राणाचे स्पंदन)</h2>
+            <h2 class="section-title">मनोमयकोश - मानसिक विकसन (प्राणांचे स्पंदन)</h2>
   `;
 
   if (result?.manomayaKosha) {
@@ -808,7 +808,7 @@ const generateHTML = (studentData) => {
   if (result?.vidnyanmayaKosha) {
     htmlContent += `
       <div class="section-container">
-        <h2 class="section-title">विज्ञानमयकोश - बौद्धिक विकसन (स्वरूपाचा विकास /बुद्धी/चेतना/अपूर्ण बोध)</h2>
+        <h2 class="section-title">विज्ञानमयकोश - बौद्धिक विकसन (कल्पना विकास /सूक्ष्म/चेतन/अमूर्त कोश )</h2>
         <div class="section-title">Annual Result</div>
     `;
 
@@ -939,7 +939,7 @@ const generateHTML = (studentData) => {
   if (result?.vidnyanmayaKosha?.maunAbhyasActivities) {
     htmlContent += `
       <div class="section-container">
-        <h2 class="section-title">मौनाभ्यास</h2>
+        <h2 class="section-title">मौनाभ्यास-आत्मिक विकसन (स्वतःच्या स्वरूपाचे भान/ जाणीव)</h2>
         <table class="maunabhyas-table">
           <thead>
             <tr>

@@ -159,7 +159,7 @@ export const updateStudentResult = async (studentId, resultData) => {
 };
 
 // services/api.js
-export const downloadStudentResult = async (studentId) => {
+export const downloadStudentResult = async (studentId,name) => {
   try {
     const response = await api.get(`/students/${studentId}/result/download`, {
       responseType: "blob", // Ensure binary data is handled properly
@@ -179,7 +179,7 @@ export const downloadStudentResult = async (studentId) => {
 
     const link = document.createElement("a");
     link.href = url;
-    link.setAttribute("download", `student_result_${studentId}.pdf`);
+    link.setAttribute("download", `${name} result.pdf`);
 
     document.body.appendChild(link);
     link.click();

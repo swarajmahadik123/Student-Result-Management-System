@@ -18,6 +18,20 @@ const StudentResult = ({ student, format, onBack }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
 
+  // Kosha images mapping
+  const koshaImages = {
+    अन्नमयकोश:
+      "https://res.cloudinary.com/dloe8x9e4/image/upload/v1744560276/ann_qcmics.jpg",
+    प्राणमयकोश:
+      "https://res.cloudinary.com/dloe8x9e4/image/upload/v1744560277/pran_ccjrr8.jpg",
+    मनोमयकोश:
+      "https://res.cloudinary.com/dloe8x9e4/image/upload/v1744560276/mano_ogjmag.jpg",
+    विज्ञानमयकोश:
+      "https://res.cloudinary.com/dloe8x9e4/image/upload/v1744560276/vidn_kmu5tk.jpg",
+    आनंदमयकोश:
+      "https://res.cloudinary.com/dloe8x9e4/image/upload/v1744560276/anand_eso59e.jpg",
+  };
+
   // Handle updates from kosha components
   const handleKoshaUpdate = (koshaType, data) => {
     setStudentData((prev) => ({
@@ -32,7 +46,6 @@ const StudentResult = ({ student, format, onBack }) => {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      // Call API to save the student result
       await updateStudentResult(studentData._id, studentData.result);
       setShowSuccessAnimation(true);
       setTimeout(() => {
@@ -120,7 +133,7 @@ const StudentResult = ({ student, format, onBack }) => {
       animate="visible"
       variants={containerVariants}
     >
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-8xl mx-auto">
         <motion.button
           onClick={onBack}
           className="mb-6 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white/90 transition-all flex items-center group"
@@ -216,12 +229,12 @@ const StudentResult = ({ student, format, onBack }) => {
             </motion.div>
           </motion.div>
 
-          {/* Kosha Tabs Navigation */}
+          {/* Kosha Tabs Navigation with Images */}
           <div className="flex flex-wrap border-b border-purple-100/30 overflow-x-auto bg-white/90">
             {Object.keys(koshaTypeMap).map((kosha, index) => (
               <motion.button
                 key={kosha}
-                className={`px-6 py-4 font-medium marathi-text relative ${
+                className={`px-4 py-3 font-medium marathi-text relative flex items-center ${
                   activeTab === kosha
                     ? `${koshaColors[kosha].text} font-semibold`
                     : "text-gray-500 hover:text-gray-700"
@@ -233,6 +246,14 @@ const StudentResult = ({ student, format, onBack }) => {
                 whileHover={{ y: -2 }}
                 whileTap={{ y: 0 }}
               >
+                {/* Kosha Logo Image */}
+                <div className="w-8 h-8 mr-2 flex-shrink-0">
+                  <img
+                    src={koshaImages[kosha]}
+                    alt={kosha}
+                    className="w-full h-full object-contain"
+                  />
+                </div>
                 {kosha}
                 {activeTab === kosha && (
                   <motion.div

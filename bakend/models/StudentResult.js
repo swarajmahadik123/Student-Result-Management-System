@@ -13,6 +13,7 @@ const studentResultSchema = new mongoose.Schema(
     rollNumber: { type: String, required: true },
     admissionNumber: { type: String, required: true, unique: true },
     standard: { type: String, required: true },
+    division: { type: String, required: true },
     academicYear: { type: String, required: true },
     resultFormatId: {
       type: mongoose.Schema.Types.ObjectId,

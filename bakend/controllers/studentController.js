@@ -60,6 +60,7 @@ const createStudent = asyncHandler(async (req, res) => {
     rollNumber,
     admissionNumber,
     standard,
+    division,
     academicYear,
   } = req.body;
 
@@ -285,6 +286,7 @@ const createStudent = asyncHandler(async (req, res) => {
     rollNumber,
     admissionNumber,
     standard,
+    division, 
     academicYear,
     resultFormatId: resultFormat._id, // Store the format ID for reference
     result,

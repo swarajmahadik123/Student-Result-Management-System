@@ -41,6 +41,7 @@ const AddEditStudentForm = ({ onClose, onSaveStudent, initialData }) => {
       rollNumber: "",
       admissionNumber: "",
       standard: "",
+      division: "",
       academicYear: "२०२४-२५", // Default academic year
     }
   );
@@ -541,6 +542,31 @@ const AddEditStudentForm = ({ onClose, onSaveStudent, initialData }) => {
                           required
                         />
                       </motion.div>
+
+                      <motion.div
+                        variants={formFieldVariants}
+                        initial="hidden"
+                        animate="visible"
+                        custom={7} // Adjust this number based on its order in the form
+                      >
+                        <label
+                          className="block text-gray-700 mb-2 marathi-text"
+                          htmlFor="division"
+                        >
+                          <Users size={16} className="inline mr-2" />
+                          तुकडी (Division)
+                        </label>
+                        <input
+                          type="text"
+                          id="division"
+                          name="division"
+                          value={studentData.division}
+                          onChange={handleChange}
+                          className="w-full px-4 py-3 border border-purple-100 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-all bg-white/80"
+                          placeholder="विभाग प्रविष्ट करा (Enter Division)"
+                          required
+                        />
+                      </motion.div>
                     </div>
 
                     {error && (
@@ -598,8 +624,10 @@ const AddEditStudentForm = ({ onClose, onSaveStudent, initialData }) => {
   );
 };
 
+
 const StudentList = ({ onSelectStudent }) => {
   const [students, setStudents] = useState([]);
+  
   const [filterStandard, setFilterStandard] = useState(
     () => sessionStorage.getItem("filterStandard") || ""
   );
@@ -679,12 +707,12 @@ const StudentList = ({ onSelectStudent }) => {
     }
   };
 
-  const handleDownloadResult = async (studentId, e) => {
+  const handleDownloadResult = async (studentId,name, e) => {
     e.stopPropagation();
     setDownloadingId(studentId);
 
     try {
-      await downloadStudentResult(studentId);
+      await downloadStudentResult(studentId, name);
       toast.success("परिणाम डाउनलोड यशस्वी");
     } catch (error) {
       toast.error("परिणाम डाउनलोड करताना त्रुटी आली");
@@ -736,7 +764,7 @@ const StudentList = ({ onSelectStudent }) => {
       animate="visible"
       variants={containerVariants}
     >
-      <div className="max-w-7xl mx-auto ">
+      <div className="max-w-8xl mx-auto ">
         <motion.div
           className="bg-white/80 backdrop-blur-xl shadow-lg rounded-2xl h-[95vh] overflow-hidden border border-purple-100/30 p-6"
           variants={itemVariants}
@@ -960,7 +988,7 @@ const StudentList = ({ onSelectStudent }) => {
                       हजेरी क्रमांक: {student.rollNumber}
                     </p>
                     <motion.button
-                      onClick={(e) => handleDownloadResult(student._id, e)}
+                      onClick={(e) => handleDownloadResult(student._id,student.name, e)}
                       className="flex items-center text-violet-600 hover:text-violet-800 bg-violet-50 hover:bg-violet-100 px-3 py-1.5 rounded-full transition-colors"
                       disabled={downloadingId === student._id}
                       whileHover={{ scale: 1.05 }}

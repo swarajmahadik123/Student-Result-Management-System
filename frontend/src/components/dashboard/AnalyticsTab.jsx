@@ -226,7 +226,7 @@ const AnalyticsTab = () => {
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-30">
+        <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 relative z-30">
           <div className="flex items-center justify-between">
             {/* Added left padding on mobile to avoid overlapping with hamburger */}
             <div className="flex items-center space-x-3 sm:space-x-4 pl-12 md:pl-0">
@@ -302,7 +302,7 @@ const AnalyticsTab = () => {
       </motion.div>
 
       <motion.div
-        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8"
+        className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -401,9 +401,7 @@ const AnalyticsTab = () => {
               </motion.div>
               <div className="mt-1 sm:mt-2 flex items-center text-xs sm:text-sm text-green-600">
                 <TrendingUp className="h-3 sm:h-4 w-3 sm:w-4 mr-1" />
-                <span>
-                  +{Math.floor(Math.random() * 10) + 1}% पिछल्या वर्ष से
-                </span>
+                <span>+{Math.floor(Math.random() * 10) + 1}%</span>
               </div>
             </div>
           </motion.div>
@@ -551,6 +549,7 @@ const AnalyticsTab = () => {
               <PieChartIcon className="h-3 sm:h-4 w-3 sm:w-4 mr-1 sm:mr-2" />
               <span className="marathi-text">लिंग वितरण</span>
             </motion.button>
+
             <motion.button
               className={`flex items-center px-3 sm:px-4 py-1 sm:py-2 rounded-lg text-xs sm:text-sm font-medium ${
                 activeChart === "bar"
@@ -568,6 +567,7 @@ const AnalyticsTab = () => {
               <BarChart3 className="h-3 sm:h-4 w-3 sm:w-4 mr-1 sm:mr-2" />
               <span className="marathi-text">कामगिरी</span>
             </motion.button>
+
             <motion.button
               className={`flex items-center px-3 sm:px-4 py-1 sm:py-2 rounded-lg text-xs sm:text-sm font-medium ${
                 activeChart === "line"
