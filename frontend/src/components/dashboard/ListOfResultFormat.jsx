@@ -1,6 +1,7 @@
-// components/dashboard/ListOfResultFormat.jsx
+"use client";
 import React, { useState, useEffect } from "react";
-import { Plus, Edit, Trash, FileText } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Plus, Edit, Trash, FileText, User } from "lucide-react";
 import { toast } from "sonner";
 import { fetchAllResultFormats, deleteResultFormat } from "../../services/api";
 import NewFormatModal from "./NewFormatModal";
@@ -46,100 +47,186 @@ const ListOfResultFormat = ({ onSelectFormat }) => {
     toast.success("नवीन स्वरूप यशस्वीरित्या तयार केले");
   };
 
-  return (
-    <div className="container mx-auto p-4 relative">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">परिणाम स्वरूप यादी</h1>
-        <button
-          onClick={() => setShowModal(true)}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md flex items-center"
-        >
-          <Plus size={18} className="mr-2" />
-          नवीन स्वरूप
-        </button>
-      </div>
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        when: "beforeChildren",
+        staggerChildren: 0.1,
+      },
+    },
+  };
 
-      {loading ? (
-        <div className="text-center py-8">लोड होत आहे...</div>
-      ) : formats.length === 0 ? (
-        <div className="text-center py-8 bg-gray-50 rounded-lg">
-          <FileText size={48} className="mx-auto text-gray-400 mb-4" />
-          <p className="text-gray-600">कोणतेही परिणाम स्वरूप सापडले नाही</p>
-          <p className="text-gray-500 mt-2">
-            नवीन स्वरूप तयार करण्यासाठी वरील बटणावर क्लिक करा
-          </p>
-        </div>
-      ) : (
-        <div className="bg-white shadow-md rounded-lg overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  इयत्ता
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  शैक्षणिक वर्ष
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  निर्माता
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  अद्यतनित
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  कृती
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {formats.map((format) => (
-                <tr
-                  key={format._id}
-                  className="hover:bg-gray-50 cursor-pointer"
-                  onClick={() => onSelectFormat(format)}
-                >
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {format.standard}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {format.academicYear}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {format.createdBy}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {new Date(format.updatedAt).toLocaleDateString("en-IN")}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onSelectFormat(format);
-                        }}
-                        className="text-blue-600 hover:text-blue-900"
-                        title="संपादित करा"
-                      >
-                        <Edit size={18} />
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteFormat(format._id);
-                        }}
-                        className="text-red-600 hover:text-red-900"
-                        title="हटवा"
-                      >
-                        <Trash size={18} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { type: "spring", stiffness: 300, damping: 24 },
+    },
+  };
+
+  return (
+    <motion.div
+      className="min-h-screen bg-gradient-to-br from-slate-50 to-purple-50 py-6 px-4 sm:px-6"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
+      <div className="max-w-7xl mx-auto">
+        <motion.div
+          className="bg-white/80 backdrop-blur-xl shadow-lg rounded-2xl overflow-hidden border border-purple-100/30 p-6"
+          variants={itemVariants}
+        >
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+            <motion.h1
+              className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-600 to-indigo-600 marathi-text"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              परिणाम स्वरूप यादी
+            </motion.h1>
+            <motion.button
+              onClick={() => setShowModal(true)}
+              className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white px-5 py-2.5 rounded-full shadow-md flex items-center"
+              whileHover={{
+                scale: 1.05,
+                boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
+              }}
+              whileTap={{ scale: 0.95 }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              <Plus size={20} className="mr-2" />
+              <span className="marathi-text">नवीन स्वरूप</span>
+            </motion.button>
+          </div>
+
+          {loading ? (
+            <motion.div
+              className="text-center py-16"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              <motion.div
+                className="inline-block h-12 w-12 rounded-full border-4 border-violet-200 border-t-violet-600"
+                animate={{ rotate: 360 }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Number.POSITIVE_INFINITY,
+                  ease: "linear",
+                }}
+              />
+              <p className="mt-4 text-gray-600 marathi-text">
+                परिणाम स्वरूप शोधत आहे...
+              </p>
+            </motion.div>
+          ) : formats.length === 0 ? (
+            <motion.div
+              className="text-center py-16 bg-white/50 rounded-2xl border border-purple-100/30"
+              variants={itemVariants}
+            >
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1, rotate: [0, 10, 0, -10, 0] }}
+                transition={{
+                  type: "spring",
+                  stiffness: 300,
+                  damping: 20,
+                  rotate: { repeat: 0, duration: 0.5 },
+                }}
+              >
+                <FileText size={64} className="mx-auto text-gray-300 mb-4" />
+              </motion.div>
+              <p className="text-gray-600 marathi-text text-lg">
+                कोणतेही परिणाम स्वरूप सापडले नाही
+              </p>
+              <p className="text-gray-500 mt-2 marathi-text">
+                कृपया नवीन स्वरूप तयार करा
+              </p>
+            </motion.div>
+          ) : (
+            <motion.div
+              className="overflow-x-auto" // Enable horizontal scrolling
+              variants={containerVariants}
+            >
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider marathi-text">
+                      इयत्ता
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider marathi-text">
+                      शैक्षणिक वर्ष
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider marathi-text">
+                      निर्माता
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider marathi-text">
+                      अद्यतनित
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <span className="sr-only">कृती</span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {formats.map((format) => (
+                    <motion.tr
+                      key={format._id}
+                      variants={itemVariants}
+                      className="hover:bg-gray-100"
+                    >
+                      <td className="px-6 py-4 whitespace-nowrap marathi-text">
+                        {format.standard}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap marathi-text">
+                        {format.academicYear}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap marathi-text">
+                        {format.createdBy}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap marathi-text">
+                        {new Date(format.updatedAt).toLocaleDateString("en-IN")}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right">
+                        <div className="flex space-x-2">
+                          <motion.button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onSelectFormat(format);
+                            }}
+                            className="text-violet-600 hover:text-violet-800 bg-violet-50 hover:bg-violet-100 p-2 rounded-full transition-colors"
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                          >
+                            <Edit size={16} />
+                          </motion.button>
+                          <motion.button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteFormat(format._id);
+                            }}
+                            className="text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 p-2 rounded-full transition-colors"
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                          >
+                            <Trash size={16} />
+                          </motion.button>
+                        </div>
+                      </td>
+                    </motion.tr>
+                  ))}
+                </tbody>
+              </table>
+            </motion.div>
+          )}
+        </motion.div>
+      </div>
 
       {showModal && (
         <NewFormatModal
@@ -147,7 +234,7 @@ const ListOfResultFormat = ({ onSelectFormat }) => {
           onSuccess={handleCreateSuccess}
         />
       )}
-    </div>
+    </motion.div>
   );
 };
 

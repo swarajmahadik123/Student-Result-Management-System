@@ -1,0 +1,43 @@
+/* Marathi Font Styles */
+@import url("https://fonts.googleapis.com/css2?family=Mukta:wght@200;300;400;500;600;700;800&display=swap");
+
+.marathi-text {
+  font-family: "Mukta", sans-serif;
+  letter-spacing: 0.02em;
+  font-feature-settings: "kern", "liga", "calt";
+}
+
+/* Custom animations for the website */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.float-animation {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Gradient text animations */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.gradient-text-animation {
+  background-size: 200% auto;
+  animation: gradient-shift 5s ease infinite;
+}

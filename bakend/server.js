@@ -14,11 +14,13 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(
-  cors({
-    origin: "https://student-result-management-system-eta.vercel.app",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
+  cors(
+  //   {
+  //   origin: "https://student-result-management-system-eta.vercel.app",
+  //   methods: ["GET", "POST", "PUT", "DELETE"],
+  //   credentials: true,
+  // }
+)
 );
 
 app.use(express.json());
