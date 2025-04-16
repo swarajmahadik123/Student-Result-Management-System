@@ -15,6 +15,25 @@ export const generateStudentResultPDF = async (studentData) => {
 
     const page = await browser.newPage();
     await page.setViewport({ width: 1200, height: 1600 });
+
+    // Pre-load the fonts before setting the content
+    await page.evaluateOnNewDocument(() => {
+      // Create a preload link for the font
+      const link = document.createElement("link");
+      link.rel = "preload";
+      link.href =
+        "https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap";
+      link.as = "style";
+      document.head.appendChild(link);
+
+      // Also create a stylesheet link
+      const style = document.createElement("link");
+      style.rel = "stylesheet";
+      style.href =
+        "https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap";
+      document.head.appendChild(style);
+    });
+
     const html = generateHTML(studentData);
 
     // Set content and wait for load
@@ -23,21 +42,25 @@ export const generateStudentResultPDF = async (studentData) => {
       timeout: 60000,
     });
 
-    // Add Google Fonts explicitly
+    // Add Google Fonts explicitly with a longer timeout
     await page.addStyleTag({
       url: "https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap",
+      timeout: 10000,
     });
 
-    // Properly wait for fonts to load
+    // More robust font loading
     await page.evaluate(() => {
       return new Promise((resolve) => {
+        // Check if document.fonts is available
         if (document.fonts && document.fonts.ready) {
+          // Wait for fonts to load
           document.fonts.ready.then(() => {
-            // Add extra time for rendering
-            setTimeout(resolve, 1000);
+            // Additional wait time to ensure proper rendering
+            setTimeout(resolve, 2000);
           });
         } else {
-          setTimeout(resolve, 2000);
+          // Fallback if document.fonts is not available
+          setTimeout(resolve, 3000);
         }
       });
     });
@@ -68,7 +91,6 @@ export const generateStudentResultPDF = async (studentData) => {
   }
 };
 
-
 const generateHTML = (studentData) => {
   const { name, standard, academicYear, result, division } = studentData;
 
@@ -81,17 +103,34 @@ const generateHTML = (studentData) => {
 
   const styles = `
     <style>
+      @font-face {
+        font-family: 'CustomDevanagari';
+        src: url('https://fonts.gstatic.com/s/notosansdevanagari/v28/TuGFUUFzXI5FBtUq5a8bjKYTZjtRU6Sgv3kY.woff2') format('woff2');
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'CustomDevanagari';
+        src: url('https://fonts.gstatic.com/s/notosansdevanagari/v28/TuGOUUFzXI5FBtUq5a8bjKYTZjtRU6Sgv3U_AmT6.woff2') format('woff2');
+        font-weight: 700;
+        font-style: normal;
+        font-display: swap;
+      }
+      
       @page {
         size: A4;
         margin: 0;
       }
       body {
-        font-family: Arial, sans-serif;
+        font-family: 'CustomDevanagari', 'Noto Sans Devanagari', Arial, sans-serif;
         color: #333;
         margin: 0;
         padding: 0;
         background-color: #fff;
       }
+      
+      /* Rest of your styles remain the same */
       .page {
         width: 210mm;
         height: 297mm;
@@ -140,6 +179,7 @@ const generateHTML = (studentData) => {
         text-align: center;
         margin: 5px 0;
         line-height: 1.2;
+        font-family: 'CustomDevanagari', 'Noto Sans Devanagari', Arial, sans-serif;
       }
       h2 {
         font-size: 18px;
@@ -156,6 +196,7 @@ const generateHTML = (studentData) => {
         font-weight: bold;
         font-size: 15px;
         line-height: 1.2;
+        font-family: 'CustomDevanagari', 'Noto Sans Devanagari', Arial, sans-serif;
       }
       .section-container {
         margin-bottom: 12px;
@@ -168,6 +209,7 @@ const generateHTML = (studentData) => {
         padding-bottom: 5px;
         border-bottom: 1px solid black;
         line-height: 1.2;
+        font-family: 'CustomDevanagari', 'Noto Sans Devanagari', Arial, sans-serif;
       }
       table {
         width: 100%;
@@ -314,6 +356,7 @@ const generateHTML = (studentData) => {
         text-align: center;
         font-weight: bold;
         margin: 8px 0;
+        font-family: 'CustomDevanagari', 'Noto Sans Devanagari', Arial, sans-serif;
         font-size: 14px;
         line-height: 1.2;
       }
@@ -328,6 +371,7 @@ const generateHTML = (studentData) => {
       }
       .hindavi{
       font-size: 25px;
+      font-family: 'CustomDevanagari', 'Noto Sans Devanagari', Arial, sans-serif;
       }
     </style>
   `;
