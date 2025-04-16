@@ -17,14 +17,32 @@ export const generateStudentResultPDF = async (studentData) => {
     await page.setViewport({ width: 1200, height: 1600 });
     const html = generateHTML(studentData);
 
+    // Set content and wait for load
     await page.setContent(html, {
       waitUntil: ["load", "networkidle2"],
       timeout: 60000,
     });
 
-    await page.evaluate(() => document.fonts.ready);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    // Add Google Fonts explicitly
+    await page.addStyleTag({
+      url: "https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap",
+    });
 
+    // Properly wait for fonts to load
+    await page.evaluate(() => {
+      return new Promise((resolve) => {
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(() => {
+            // Add extra time for rendering
+            setTimeout(resolve, 1000);
+          });
+        } else {
+          setTimeout(resolve, 2000);
+        }
+      });
+    });
+
+    // Generate PDF
     const pdfBuffer = await page.pdf({
       format: "A4",
       printBackground: true,
@@ -38,29 +56,25 @@ export const generateStudentResultPDF = async (studentData) => {
       displayHeaderFooter: false,
     });
 
-    if (pdfBuffer.length < 5000) {
-      console.warn("Warning: PDF buffer is suspiciously small");
-    }
-
     return pdfBuffer;
   } catch (error) {
     console.error("PDF generation error:", error);
     throw error;
   } finally {
-    if (browser) {
+    if (browser)
       await browser
         .close()
         .catch((e) => console.error("Error closing browser:", e));
-    }
   }
 };
+
 
 const generateHTML = (studentData) => {
   const { name, standard, academicYear, result, division } = studentData;
 
   // Base64 encoded logos
   const rightLogo =
-    "https://res.cloudinary.com/dloe8x9e4/image/upload/v1743612654/gurukul_logo_xtcv1x.jpg";
+    "https://res.cloudinary.com/dloe8x9e4/image/upload/v1743612669/hindavi_logo_1_zgn1rn.png";
   const leftLogo =
     "https://res.cloudinary.com/dloe8x9e4/image/upload/v1743612669/hindavi_logo_1_zgn1rn.png";
   const watermarkLogo = rightLogo;
@@ -333,7 +347,7 @@ const generateHTML = (studentData) => {
         <div class="page-content">
           <img src="${watermarkLogo}" class="watermark" alt="Watermark">
           <div class="header">
-            <img src="${leftLogo}" class="logo" alt="Left Logo">
+            <div class="logo"></div>
             <div class="header-content">
               <h4>श्रीनिधी एज्युकेशन सोसायटी</h4>
               <h2 class="hindavi">हिंदवी पब्लिक स्कूल सातारा</h2>
