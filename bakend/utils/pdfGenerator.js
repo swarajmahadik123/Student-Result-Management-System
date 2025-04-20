@@ -96,7 +96,7 @@ const generateHTML = (studentData) => {
 
   // Base64 encoded logos
   const rightLogo =
-    "https://res.cloudinary.com/dloe8x9e4/image/upload/v1743612669/hindavi_logo_1_zgn1rn.png";
+    "https://res.cloudinary.com/dloe8x9e4/image/upload/v1745153175/PANCHKOSHADHARIT_GURUKUL_c28rql.jpg";
   const leftLogo =
     "https://res.cloudinary.com/dloe8x9e4/image/upload/v1743612669/hindavi_logo_1_zgn1rn.png";
   const watermarkLogo = rightLogo;
