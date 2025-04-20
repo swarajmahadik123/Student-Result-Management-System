@@ -138,7 +138,7 @@ const AddEditStudentForm = ({ onClose, onSaveStudent, initialData }) => {
         exit="exit"
       >
         <motion.div
-          className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden border border-purple-100/30"
+          className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-3xl  border border-purple-100/30"
           variants={modalVariants}
           initial="hidden"
           animate="visible"
@@ -624,10 +624,9 @@ const AddEditStudentForm = ({ onClose, onSaveStudent, initialData }) => {
   );
 };
 
-
 const StudentList = ({ onSelectStudent }) => {
   const [students, setStudents] = useState([]);
-  
+
   const [filterStandard, setFilterStandard] = useState(
     () => sessionStorage.getItem("filterStandard") || ""
   );
@@ -707,7 +706,7 @@ const StudentList = ({ onSelectStudent }) => {
     }
   };
 
-  const handleDownloadResult = async (studentId,name, e) => {
+  const handleDownloadResult = async (studentId, name, e) => {
     e.stopPropagation();
     setDownloadingId(studentId);
 
@@ -766,7 +765,7 @@ const StudentList = ({ onSelectStudent }) => {
     >
       <div className="max-w-8xl mx-auto ">
         <motion.div
-          className="bg-white/80 backdrop-blur-xl shadow-lg rounded-2xl h-[95vh] overflow-hidden border border-purple-100/30 p-6"
+          className="bg-white/80 backdrop-blur-xl shadow-lg rounded-2xl h-[95vh]  border border-purple-100/30 p-6"
           variants={itemVariants}
         >
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
@@ -844,7 +843,7 @@ const StudentList = ({ onSelectStudent }) => {
                 <AnimatePresence>
                   {isDropdownOpen && (
                     <motion.div
-                      className="absolute z-10 w-full mt-2 bg-white rounded-xl shadow-lg border border-purple-100 overflow-hidden"
+                      className="absolute z-10 w-full mt-2 bg-white rounded-xl shadow-lg border border-purple-100 "
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
@@ -934,7 +933,7 @@ const StudentList = ({ onSelectStudent }) => {
               {students.map((student, index) => (
                 <motion.div
                   key={student._id}
-                  className="bg-white/90 backdrop-blur-sm border border-purple-100/30 p-5 rounded-2xl hover:bg-white transition-colors cursor-pointer relative overflow-hidden group"
+                  className="bg-white/90 backdrop-blur-sm border border-purple-100/30 p-5 rounded-2xl hover:bg-white transition-colors cursor-pointer relative  group"
                   variants={cardVariants}
                   whileHover="hover"
                   custom={index}
@@ -988,7 +987,9 @@ const StudentList = ({ onSelectStudent }) => {
                       हजेरी क्रमांक: {student.rollNumber}
                     </p>
                     <motion.button
-                      onClick={(e) => handleDownloadResult(student._id,student.name, e)}
+                      onClick={(e) =>
+                        handleDownloadResult(student._id, student.name, e)
+                      }
                       className="flex items-center text-violet-600 hover:text-violet-800 bg-violet-50 hover:bg-violet-100 px-3 py-1.5 rounded-full transition-colors"
                       disabled={downloadingId === student._id}
                       whileHover={{ scale: 1.05 }}

@@ -15,16 +15,57 @@ export const generateStudentResultPDF = async (studentData) => {
 
     const page = await browser.newPage();
     await page.setViewport({ width: 1200, height: 1600 });
+
+    // Pre-load the fonts before setting the content
+    await page.evaluateOnNewDocument(() => {
+      // Create a preload link for the font
+      const link = document.createElement("link");
+      link.rel = "preload";
+      link.href =
+        "https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap";
+      link.as = "style";
+      document.head.appendChild(link);
+
+      // Also create a stylesheet link
+      const style = document.createElement("link");
+      style.rel = "stylesheet";
+      style.href =
+        "https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap";
+      document.head.appendChild(style);
+    });
+
     const html = generateHTML(studentData);
 
+    // Set content and wait for load
     await page.setContent(html, {
       waitUntil: ["load", "networkidle2"],
       timeout: 60000,
     });
 
-    await page.evaluate(() => document.fonts.ready);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    // Add Google Fonts explicitly with a longer timeout
+    await page.addStyleTag({
+      url: "https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap",
+      timeout: 10000,
+    });
 
+    // More robust font loading
+    await page.evaluate(() => {
+      return new Promise((resolve) => {
+        // Check if document.fonts is available
+        if (document.fonts && document.fonts.ready) {
+          // Wait for fonts to load
+          document.fonts.ready.then(() => {
+            // Additional wait time to ensure proper rendering
+            setTimeout(resolve, 2000);
+          });
+        } else {
+          // Fallback if document.fonts is not available
+          setTimeout(resolve, 3000);
+        }
+      });
+    });
+
+    // Generate PDF
     const pdfBuffer = await page.pdf({
       format: "A4",
       printBackground: true,
@@ -38,20 +79,15 @@ export const generateStudentResultPDF = async (studentData) => {
       displayHeaderFooter: false,
     });
 
-    if (pdfBuffer.length < 5000) {
-      console.warn("Warning: PDF buffer is suspiciously small");
-    }
-
     return pdfBuffer;
   } catch (error) {
     console.error("PDF generation error:", error);
     throw error;
   } finally {
-    if (browser) {
+    if (browser)
       await browser
         .close()
         .catch((e) => console.error("Error closing browser:", e));
-    }
   }
 };
 
@@ -60,24 +96,41 @@ const generateHTML = (studentData) => {
 
   // Base64 encoded logos
   const rightLogo =
-    "https://res.cloudinary.com/dloe8x9e4/image/upload/v1743612654/gurukul_logo_xtcv1x.jpg";
+    "https://res.cloudinary.com/dloe8x9e4/image/upload/v1743612669/hindavi_logo_1_zgn1rn.png";
   const leftLogo =
     "https://res.cloudinary.com/dloe8x9e4/image/upload/v1743612669/hindavi_logo_1_zgn1rn.png";
   const watermarkLogo = rightLogo;
 
   const styles = `
     <style>
+      @font-face {
+        font-family: 'CustomDevanagari';
+        src: url('https://fonts.gstatic.com/s/notosansdevanagari/v28/TuGFUUFzXI5FBtUq5a8bjKYTZjtRU6Sgv3kY.woff2') format('woff2');
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+      }
+      @font-face {
+        font-family: 'CustomDevanagari';
+        src: url('https://fonts.gstatic.com/s/notosansdevanagari/v28/TuGOUUFzXI5FBtUq5a8bjKYTZjtRU6Sgv3U_AmT6.woff2') format('woff2');
+        font-weight: 700;
+        font-style: normal;
+        font-display: swap;
+      }
+      
       @page {
         size: A4;
         margin: 0;
       }
       body {
-        font-family: Arial, sans-serif;
+        font-family: 'CustomDevanagari', 'Noto Sans Devanagari', Arial, sans-serif;
         color: #333;
         margin: 0;
         padding: 0;
         background-color: #fff;
       }
+      
+      /* Rest of your styles remain the same */
       .page {
         width: 210mm;
         height: 297mm;
@@ -126,6 +179,7 @@ const generateHTML = (studentData) => {
         text-align: center;
         margin: 5px 0;
         line-height: 1.2;
+        font-family: 'CustomDevanagari', 'Noto Sans Devanagari', Arial, sans-serif;
       }
       h2 {
         font-size: 18px;
@@ -142,6 +196,7 @@ const generateHTML = (studentData) => {
         font-weight: bold;
         font-size: 15px;
         line-height: 1.2;
+        font-family: 'CustomDevanagari', 'Noto Sans Devanagari', Arial, sans-serif;
       }
       .section-container {
         margin-bottom: 12px;
@@ -154,6 +209,7 @@ const generateHTML = (studentData) => {
         padding-bottom: 5px;
         border-bottom: 1px solid black;
         line-height: 1.2;
+        font-family: 'CustomDevanagari', 'Noto Sans Devanagari', Arial, sans-serif;
       }
       table {
         width: 100%;
@@ -300,6 +356,7 @@ const generateHTML = (studentData) => {
         text-align: center;
         font-weight: bold;
         margin: 8px 0;
+        font-family: 'CustomDevanagari', 'Noto Sans Devanagari', Arial, sans-serif;
         font-size: 14px;
         line-height: 1.2;
       }
@@ -314,6 +371,7 @@ const generateHTML = (studentData) => {
       }
       .hindavi{
       font-size: 25px;
+      font-family: 'CustomDevanagari', 'Noto Sans Devanagari', Arial, sans-serif;
       }
     </style>
   `;
@@ -333,7 +391,7 @@ const generateHTML = (studentData) => {
         <div class="page-content">
           <img src="${watermarkLogo}" class="watermark" alt="Watermark">
           <div class="header">
-            <img src="${leftLogo}" class="logo" alt="Left Logo">
+            <div class="logo"></div>
             <div class="header-content">
               <h4>श्रीनिधी एज्युकेशन सोसायटी</h4>
               <h2 class="hindavi">हिंदवी पब्लिक स्कूल सातारा</h2>
@@ -804,97 +862,197 @@ const generateHTML = (studentData) => {
 
   // ... (previous code remains the same until Vidnyanmaya Kosha section)
 
-  // Vidnyanmaya Kosha (Annual Result only)
-  if (result?.vidnyanmayaKosha) {
-    htmlContent += `
+if (result?.vidnyanmayaKosha) {
+  const isSeventhOrSixthStandard = ["७", "६"].includes(studentData.standard);
+  const isFifthOrEighthStandard = ["५", "८"].includes(studentData.standard);
+
+  htmlContent += `
       <div class="section-container">
         <h2 class="section-title">विज्ञानमयकोश - बौद्धिक विकसन (कल्पना विकास /सूक्ष्म/चेतन/अमूर्त कोश )</h2>
         <div class="section-title">Annual Result</div>
-    `;
+        
+        <!-- Tables Container -->
+        <div style="display: flex; justify-content: space-between; gap: 4px; margin-bottom: 8px; font-size: 8px;">
+          <!-- Table 1: Academic Examination -->
+          <div style="width: ${
+            isSeventhOrSixthStandard ? "60%" : "38%"
+          }; display: flex; flex-direction: column;">
+            <table style="width: 100%; border-collapse: collapse; border: 1px solid black;">
+              <thead>
+                <tr style="background-color: #f2f2f2; height: 20px;">
+                  <th colspan="3" style="text-align: center; padding: 1px; border: 1px solid black;">Academic Examination</th>
+                </tr>
+                <tr style="background-color: #f2f2f2; height: 20px;">
+                  <th style="width: 10%; text-align: center; padding: 1px; border: 1px solid black;">Sr No</th>
+                  <th style="width: 55%; text-align: left; padding: 1px; border: 1px solid black;">Subject</th>
+                  <th style="width: 35%; text-align: center; padding: 0; border: 1px solid black;">
+                    <div style="display: flex; flex-direction: column; height: 100%;">
+                      <span style="padding: 1px 0;">Grade</span>
+                      <div style="display: flex; border-top: 1px solid black; margin-top: 1px;">
+                        <span style="flex: 1; text-align: center; padding: 1px 0; border-right: 1px solid black;">Sem1</span>
+                        <span style="flex: 1; text-align: center; padding: 1px 0;">Sem2</span>
+                      </div>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>`;
 
-    // Subjects (Annual Result Table)
-    if (result.vidnyanmayaKosha.subjects?.length > 0) {
-      htmlContent += `
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 20px;">
-            <!-- Subject and Grade Table -->
-            <table class="annual-result-table" style="width: 50%; border-collapse: collapse; border: 1px solid black;">
-                <thead>
-                    <tr style="background-color: #f2f2f2;">
-                        <th style="width: 70%; text-align: left; padding: 8px; border: 1px solid black;">Subject</th>
-                        <th style="width: 30%; text-align: center; padding: 8px; border: 1px solid black;">Grade</th>
-                    </tr>
-                </thead>
-                <tbody>`;
+  // Add subjects to Table 1
+  result.vidnyanmayaKosha.subjects?.forEach((subject, index) => {
+    htmlContent += `
+                <tr style="height: 18px;">
+                  <td style="text-align: center; padding: 1px; border: 1px solid black; vertical-align: middle;">${
+                    index + 1
+                  }</td>
+                  <td style="text-align: left; padding: 1px; border: 1px solid black; vertical-align: middle;">${
+                    subject.label
+                  }</td>
+                  <td style="text-align: center; padding: 0; border: 1px solid black; vertical-align: middle;">
+                    <div style="display: flex; height: 100%;">
+                      <span style="flex: 1; text-align: center; padding: 2px 0; border-right: 1px solid black; font-weight: bold; display: flex; align-items: center; justify-content: center;">${
+                        subject.grade?.sem1 || "-"
+                      }</span>
+                      <span style="flex: 1; text-align: center; padding: 2px 0; font-weight: bold; display: flex; align-items: center; justify-content: center;">${
+                        subject.grade?.sem2 || "-"
+                      }</span>
+                    </div>
+                  </td>
+                </tr>`;
+  });
 
-      result.vidnyanmayaKosha.subjects.forEach((subject) => {
-        htmlContent += `
-                    <tr>
-                        <td style="text-align: left; padding: 8px; border: 1px solid black;">${
-                          subject.label
-                        }</td>
-                        <td style="text-align: center; padding: 8px; border: 1px solid black; font-weight: bold;">${
-                          subject.grade || "-"
-                        }</td>
-                    </tr>`;
-      });
-
-      htmlContent += `
-                </tbody>
+  htmlContent += `
+              </tbody>
             </table>
+          </div>`;
 
-            <!-- Grade Range Table - 4 column layout -->
-            <table class="grade-range-table" style="width: 50%; border-collapse: collapse; border: 1px solid black;">
-                <thead>
-                    <tr style="background-color: #f2f2f2;">
-                        <th colspan="4" style="text-align: center; padding: 8px; border: 1px solid black;">Grade Range</th>
-                    </tr>
-                    <tr style="background-color: #f2f2f2;">
-                        <th style="width: 40%; text-align: left; padding: 8px; border: 1px solid black;">Marks</th>
-                        <th style="width: 10%; text-align: center; padding: 8px; border: 1px solid black;">Grade</th>
-                        <th style="width: 40%; text-align: left; padding: 8px; border: 1px solid black;">Marks</th>
-                        <th style="width: 10%; text-align: center; padding: 8px; border: 1px solid black;">Grade</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td style="text-align: left; padding: 8px; border: 1px solid black;">91% to 100%</td>
-                        <td style="text-align: center; padding: 8px; border: 1px solid black;">A-1</td>
-                        <td style="text-align: left; padding: 8px; border: 1px solid black;">51% to 60%</td>
-                        <td style="text-align: center; padding: 8px; border: 1px solid black;">C-1</td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: left; padding: 8px; border: 1px solid black;">81% to 90%</td>
-                        <td style="text-align: center; padding: 8px; border: 1px solid black;">A-2</td>
-                        <td style="text-align: left; padding: 8px; border: 1px solid black;">41% to 50%</td>
-                        <td style="text-align: center; padding: 8px; border: 1px solid black;">C-2</td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: left; padding: 8px; border: 1px solid black;">71% to 80%</td>
-                        <td style="text-align: center; padding: 8px; border: 1px solid black;">B-1</td>
-                        <td style="text-align: left; padding: 8px; border: 1px solid black;">33% to 40%</td>
-                        <td style="text-align: center; padding: 8px; border: 1px solid black;">D-1</td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: left; padding: 8px; border: 1px solid black;">61% to 70%</td>
-                        <td style="text-align: center; padding: 8px; border: 1px solid black;">B-2</td>
-                        <td style="text-align: left; padding: 8px; border: 1px solid black;">21% to 32%</td>
-                        <td style="text-align: center; padding: 8px; border: 1px solid black;">E-1</td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: left; padding: 8px; border: 1px solid black;"></td>
-                        <td style="text-align: center; padding: 8px; border: 1px solid black;"></td>
-                        <td style="text-align: left; padding: 8px; border: 1px solid black;">20% & Below</td>
-                        <td style="text-align: center; padding: 8px; border: 1px solid black;">E-2</td>
-                    </tr>
-                </tbody>
+  // Only show Annual Marks table for standards other than 7th and 8th
+  if (!isSeventhOrSixthStandard) {
+    htmlContent += `
+          <!-- Table 2: Annual Marks -->
+          <div style="width: 38%;">
+            <table style="width: 100%; border-collapse: collapse; border: 1px solid black; height: 100%;">
+              <thead>
+                <tr style="background-color: #f2f2f2; height: 20px;">
+                  <th colspan="3" style="text-align: center; padding: 1px; border: 1px solid black;">Annual Marks</th>
+                </tr>
+                <tr style="background-color: #f2f2f2; height: 20px;">
+                  <th style="width: 30%; text-align: center; padding: 1px; border: 1px solid black;">Min Marks</th>
+                  <th style="width: 30%; text-align: center; padding: 1px; border: 1px solid black;">Sem2 Marks</th>
+                  <th style="width: 40%; text-align: center; padding: 1px; border: 1px solid black;">Remarks</th>
+                </tr>
+              </thead>
+              <tbody style="height: 100%;">`;
+
+    // Add marks to Table 2
+    let totalMinMarks = 0;
+    let totalSem2Marks = 0;
+    const subjectCount = result.vidnyanmayaKosha.subjects?.length || 0;
+
+    // Calculate row height to distribute space evenly
+    const rowHeightForSubjects =
+      subjectCount > 0 ? `calc((100% - 18px) / ${subjectCount})` : "18px";
+
+    result.vidnyanmayaKosha.subjects?.forEach((subject) => {
+      totalMinMarks += Number(subject.minimumMarks) || 0;
+      totalSem2Marks += Number(subject.sem2obtainedMarks) || 0;
+
+      htmlContent += `
+                <tr style="height: ${rowHeightForSubjects};">
+                  <td style="text-align: center; padding: 1px; border: 1px solid black; vertical-align: middle;">${
+                    subject.minimumMarks || "-"
+                  }</td>
+                  <td style="text-align: center; padding: 1px; border: 1px solid black; vertical-align: middle; font-weight: bold;">${
+                    subject.sem2obtainedMarks || "-"
+                  }</td>
+                  <td style="text-align: center; padding: 1px; border: 1px solid black; vertical-align: middle;">${
+                    subject.remarks || "-"
+                  }</td>
+                </tr>`;
+    });
+
+    // Add total row
+    const percentage =
+      result.vidnyanmayaKosha.percentage ||
+      (totalSem2Marks > 0
+        ? Math.round((totalSem2Marks / totalMinMarks) * 100)
+        : 0);
+
+    // For 5th and 8th standard, show overall remarks in brackets next to percentage
+    const percentageWithRemarks =
+      isFifthOrEighthStandard && result.vidnyanmayaKosha.overallRemarks
+        ? `${percentage}% (${result.vidnyanmayaKosha.overallRemarks})`
+        : `${percentage}%`;
+
+    htmlContent += `
+                <tr style="height: 18px; font-weight: bold; background-color: #f5f5f5;">
+                  <td style="text-align: center; padding: 1px; border: 1px solid black; vertical-align: middle;">Total</td>
+                  <td style="text-align: center; padding: 1px; border: 1px solid black; vertical-align: middle;">${
+                    totalSem2Marks || "-"
+                  }</td>
+                  <td style="text-align: center; padding: 1px; border: 1px solid black; vertical-align: middle;">${percentageWithRemarks}</td>
+                </tr>
+              </tbody>
             </table>
+          </div>`;
+  }
+
+  htmlContent += `
+          <!-- Table 3: Grade Range -->
+          <table style="width: ${
+            isSeventhOrSixthStandard ? "40%" : "24%"
+          }; border-collapse: collapse; border: 1px solid black;">
+            <thead>
+              <tr style="background-color: #f2f2f2; height: 20px;">
+                <th colspan="2" style="text-align: center; padding: 1px; border: 1px solid black;">Grade Range</th>
+              </tr>
+              <tr style="background-color: #f2f2f2; height: 20px;">
+                <th style="width: 60%; text-align: center; padding: 1px; border: 1px solid black;">Range</th>
+                <th style="width: 40%; text-align: center; padding: 1px; border: 1px solid black;">Grade</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="height: 18px;">
+                <td style="text-align: center; padding: 1px; border: 1px solid black; vertical-align: middle;">91% to 100%</td>
+                <td style="text-align: center; padding: 1px; border: 1px solid black; vertical-align: middle;">A1</td>
+              </tr>
+              <tr style="height: 18px;">
+                <td style="text-align: center; padding: 1px; border: 1px solid black; vertical-align: middle;">81% to 90%</td>
+                <td style="text-align: center; padding: 1px; border: 1px solid black; vertical-align: middle;">A2</td>
+              </tr>
+              <tr style="height: 18px;">
+                <td style="text-align: center; padding: 1px; border: 1px solid black; vertical-align: middle;">71% to 80%</td>
+                <td style="text-align: center; padding: 1px; border: 1px solid black; vertical-align: middle;">B1</td>
+              </tr>
+              <tr style="height: 18px;">
+                <td style="text-align: center; padding: 1px; border: 1px solid black; vertical-align: middle;">61% to 70%</td>
+                <td style="text-align: center; padding: 1px; border: 1px solid black; vertical-align: middle;">B2</td>
+              </tr>
+              <tr style="height: 18px;">
+                <td style="text-align: center; padding: 1px; border: 1px solid black; vertical-align: middle;">51% to 60%</td>
+                <td style="text-align: center; padding: 1px; border: 1px solid black; vertical-align: middle;">C1</td>
+              </tr>
+              <tr style="height: 18px;">
+                <td style="text-align: center; padding: 1px; border: 1px solid black; vertical-align: middle;">41% to 50%</td>
+                <td style="text-align: center; padding: 1px; border: 1px solid black; vertical-align: middle;">C2</td>
+              </tr>
+              <tr style="height: 18px;">
+                <td style="text-align: center; padding: 1px; border: 1px solid black; vertical-align: middle;">33% to 40%</td>
+                <td style="text-align: center; padding: 1px; border: 1px solid black; vertical-align: middle;">D</td>
+              </tr>
+              <tr style="height: 18px;">
+                <td style="text-align: center; padding: 1px; border: 1px solid black; vertical-align: middle;">Below 33%</td>
+                <td style="text-align: center; padding: 1px; border: 1px solid black; vertical-align: middle;">E</td>
+              </tr>
+            </tbody>
+          </table>
         </div>`;
-    }
+}
 
-    // Daily Observations
-    if (result.vidnyanmayaKosha.dailyObservations?.length > 0) {
-      htmlContent += `
-        <div class="section-title">दैनंदिन निरीक्षण</div>
+  // Daily Observations (remaining code remains the same)
+  if (result.vidnyanmayaKosha.dailyObservations?.length > 0) {
+    htmlContent += `
+        <div class="section-title" style="margin-top: 20px" >दैनंदिन निरीक्षण</div>
         <table class="compact-table">
           <thead>
             <tr>
@@ -905,8 +1063,8 @@ const generateHTML = (studentData) => {
           <tbody>
       `;
 
-      result.vidnyanmayaKosha.dailyObservations.forEach((observation) => {
-        htmlContent += `
+    result.vidnyanmayaKosha.dailyObservations.forEach((observation) => {
+      htmlContent += `
           <tr>
             <td style="font-weight: bold; text-align: start;">${
               observation.category
@@ -914,13 +1072,12 @@ const generateHTML = (studentData) => {
             <td>${observation.selectedOption || "-"}</td>
           </tr>
         `;
-      });
+    });
 
-      htmlContent += `</tbody></table>`;
-    }
-
-    htmlContent += `</div>`;
+    htmlContent += `</tbody></table>`;
   }
+
+  htmlContent += `</div>`;
 
   htmlContent += `
           </div>

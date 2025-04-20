@@ -4,6 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import studentRoutes from "./routers/studentRoutes.js";
 import resultFormatRoutes from "./routers/resultFormatRoutes.js";
+import resultFormatRoutesh from "./routers/HindaviResultFormat.js";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import authRoutes from "./routers/authRoutes.js";
 
@@ -29,6 +30,7 @@ app.use(express.json());
 app.use("/api/students", studentRoutes);
 app.use("/api/result-formats", resultFormatRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/hindavi", resultFormatRoutesh);
 
 // Error Handling
 app.use(notFound);

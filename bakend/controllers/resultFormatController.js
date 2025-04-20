@@ -6,6 +6,10 @@
   // @access  Private
   const getResultFormats = asyncHandler(async (req, res) => {
     const resultFormats = await ResultFormat.find({});
+    if (!resultFormats || resultFormats.length === 0) {
+      res.status(404);
+      throw new Error("No result formats found");
+    }
     res.json(resultFormats);
   });
 

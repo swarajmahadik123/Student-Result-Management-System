@@ -17,8 +17,7 @@ router.get("/result-formats", fetchAllResultFormats);
 
 // routes/resultFormatRoutes.js
 
-router.get('/standard/:standard', getResultFormatByStandard);
-
+router.get("/standard/:standard", getResultFormatByStandard);
 
 router
   .route("/:id")

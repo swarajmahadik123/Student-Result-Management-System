@@ -1,12 +1,9 @@
 // controllers/studentController.js
-import PDFDocument from "pdfkit";
-import fs from "fs";
-import path from "path";
 import asyncHandler from "express-async-handler";
 import StudentResult from "../models/StudentResult.js";
 import ResultFormat from "../models/ResultFormat.js";
-import  {generateStudentResultPDF}  from "../utils/pdfGenerator.js";
-import { fileURLToPath } from "url";
+import { generateStudentResultPDF } from "../utils/pdfGenerator.js";
+
 // @desc    Get all students
 // @route   GET /api/students
 // @access  Private
@@ -110,6 +107,7 @@ const createStudent = asyncHandler(async (req, res) => {
           value: "",
         })
       ),
+      prakruti: "",
     },
     pranamayaKosha: {
       chhandavarga: {
@@ -194,12 +192,17 @@ const createStudent = asyncHandler(async (req, res) => {
       subjects: resultFormat.vidnyanmayaKosha.subjects.map((item) => ({
         id: item.id,
         label: item.label,
-        unit1: { total: "25", obtained: "0" },
-        semester1: { total: "50", obtained: "0" },
-        unit2: { total: "25", obtained: "0" },
-        terminal: { total: "100", obtained: "0" },
-        grade: "",
+        grade: {
+          sem1: "",
+          sem2: "",
+        },
+        minimumMarks: null,
+        sem2obtainedMarks: null,
+        remarks: "",
       })),
+      totalMarks: 0,
+      percentage: 0,
+      overallRemarks: "",
       maunAbhyasActivities: {
         mukhyaVishay:
           resultFormat.vidnyanmayaKosha.maunAbhyasActivities.mukhyaVishay.map(
@@ -286,9 +289,9 @@ const createStudent = asyncHandler(async (req, res) => {
     rollNumber,
     admissionNumber,
     standard,
-    division, 
+    division,
     academicYear,
-    resultFormatId: resultFormat._id, // Store the format ID for reference
+    resultFormatId: resultFormat._id,
     result,
   });
 
@@ -302,7 +305,6 @@ const updateStudent = asyncHandler(async (req, res) => {
   const student = await StudentResult.findById(req.params.id);
 
   if (student) {
-    // Update basic info
     student.name = req.body.name || student.name;
     student.motherName = req.body.motherName || student.motherName;
     student.fatherName = req.body.fatherName || student.fatherName;
@@ -314,7 +316,6 @@ const updateStudent = asyncHandler(async (req, res) => {
     student.standard = req.body.standard || student.standard;
     student.academicYear = req.body.academicYear || student.academicYear;
 
-    // If admission number is being changed, check for uniqueness
     if (
       req.body.admissionNumber &&
       req.body.admissionNumber !== student.admissionNumber
@@ -331,7 +332,6 @@ const updateStudent = asyncHandler(async (req, res) => {
       student.admissionNumber = req.body.admissionNumber;
     }
 
-    // Update result if provided
     if (req.body.result) {
       student.result = req.body.result;
     }
@@ -351,8 +351,10 @@ const updateStudentResult = asyncHandler(async (req, res) => {
   const student = await StudentResult.findById(req.params.id);
 
   if (student) {
-    // Update only the result part
-    student.result = req.body.result || student.result;
+    if (req.body.result) {
+      // Use the manually entered values from the request body
+      student.result = req.body.result;
+    }
 
     const updatedStudent = await student.save();
     res.json(updatedStudent);
@@ -404,27 +406,24 @@ const getStudentByAdmissionNumber = asyncHandler(async (req, res) => {
   }
 });
 
-
-
-export const downloadStudentResult = asyncHandler(async (req, res) => {
+// @desc    Download student result PDF
+// @route   GET /api/students/:id/download
+// @access  Private
+const downloadStudentResult = asyncHandler(async (req, res) => {
   try {
     const studentId = req.params.id;
 
-    // Fetch student data from the database
     const student = await StudentResult.findById(studentId);
     if (!student) {
       return res.status(404).json({ message: "Student not found" });
     }
 
-    // Generate PDF using Puppeteer
     const pdfBuffer = await generateStudentResultPDF(student);
 
-    // Validate buffer size
     if (!pdfBuffer || pdfBuffer.length === 0) {
       throw new Error("Failed to generate PDF");
     }
 
-    // Set response headers for PDF download
     res.set({
       "Content-Type": "application/pdf",
       "Content-Length": pdfBuffer.length,
@@ -433,14 +432,12 @@ export const downloadStudentResult = asyncHandler(async (req, res) => {
       Pragma: "no-cache",
     });
 
-    // Send the PDF buffer directly
-    res.end(pdfBuffer); // Use res.end() for binary data
+    res.end(pdfBuffer);
   } catch (error) {
     console.error("Error generating PDF:", error);
     res.status(500).json({ message: "Error generating PDF" });
   }
 });
-
 
 export {
   getStudents,
@@ -451,4 +448,5 @@ export {
   deleteStudent,
   getStudentsByStandard,
   getStudentByAdmissionNumber,
+  downloadStudentResult,
 };

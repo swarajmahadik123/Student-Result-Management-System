@@ -7,6 +7,7 @@ import "./App.css";
 import Home from  "./pages/Home.jsx"
 import LoginForm from "./components/LoginForm.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import IndexHindavi from "./pages/IndexHindavi.jsx";
 
 // Create a basic toast notification system
 const ToastContext = React.createContext();
@@ -62,12 +63,12 @@ const App = () => (
         <Routes>
           <Route path="/login" element={<LoginForm />} />
           <Route path="/" element={<Home />} />
-          
+
           <Route
             path="/dashboard-hindavi"
             element={
               <ProtectedRoute role="hindavi">
-                <Index />
+                <IndexHindavi />
               </ProtectedRoute>
             }
           />

@@ -79,6 +79,8 @@ export const deleteResultFormat = async (id) => {
 
 export const fetchResultFormatByStandard = async (standard, academicYear) => {
   try {
+    console.log("Fetching result format for standard:", standard);
+    console.log("Academic Year:", academicYear);
     const response = await api.get(`/result-formats/standard/${standard}`, {
       params: { academicYear },
     });
@@ -159,7 +161,7 @@ export const updateStudentResult = async (studentId, resultData) => {
 };
 
 // services/api.js
-export const downloadStudentResult = async (studentId,name) => {
+export const downloadStudentResult = async (studentId, name) => {
   try {
     const response = await api.get(`/students/${studentId}/result/download`, {
       responseType: "blob", // Ensure binary data is handled properly
@@ -194,6 +196,72 @@ export const downloadStudentResult = async (studentId,name) => {
     }
 
     throw new Error("Failed to download result. Please try again.");
+  }
+};
+
+// Hindavi Result Format API calls
+export const fetchAllHindaviResultFormats = async () => {
+  try {
+    const response = await api.get("/hindavi/resultFormats");
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Error fetching all result formats:",
+      error.response?.data?.message || error.message
+    );
+    throw error;
+  }
+};
+
+export const fetchHindaviResultFormatById = async (id) => {
+  try {
+    const response = await api.get(`/hindavi/resultFormats/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Error fetching Hindavi result format:",
+      error.response?.data?.message || error.message
+    );
+    throw error;
+  }
+};
+
+export const createHindaviResultFormat = async (formatData) => {
+  try {
+    const response = await api.post("/hindavi/resultFormats", formatData);
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Error creating Hindavi result format:",
+      error.response?.data?.message || error.message
+    );
+    throw error;
+  }
+};
+
+export const updateHindaviResultFormat = async (id, formatData) => {
+  try {
+    const response = await api.put(`/hindavi/resultFormats/${id}`, formatData);
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Error updating Hindavi result format:",
+      error.response?.data?.message || error.message
+    );
+    throw error;
+  }
+};
+
+export const deleteHindaviResultFormat = async (id) => {
+  try {
+    const response = await api.delete(`/hindavi/resultFormats/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Error deleting Hindavi result format:",
+      error.response?.data?.message || error.message
+    );
+    throw error;
   }
 };
 

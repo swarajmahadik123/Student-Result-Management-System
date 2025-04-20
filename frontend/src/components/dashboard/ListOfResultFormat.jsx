@@ -19,6 +19,7 @@ const ListOfResultFormat = ({ onSelectFormat }) => {
     try {
       setLoading(true);
       const data = await fetchAllResultFormats();
+      console.log("Fetched formats:", data);
       setFormats(data);
     } catch (error) {
       console.error("Error fetching result formats:", error);

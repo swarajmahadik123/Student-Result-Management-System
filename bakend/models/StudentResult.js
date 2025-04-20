@@ -138,9 +138,18 @@ const studentResultSchema = new mongoose.Schema(
           {
             id: { type: String, required: true },
             label: { type: String, required: true }, // Subject name
-            grade: { type: String }, // Grade for the subject
+            grade: {
+              sem1: { type: String }, // Grade for the first semester
+              sem2: { type: String }, // Grade for the second semester
+            },
+            minimumMarks: { type: Number }, // Minimum marks required for the subject
+            sem2obtainedMarks: { type: Number }, // Marks obtained in the second semester
+            remarks: { type: String }, // Remarks for the subject (e.g., pass/fail)
           },
         ],
+        totalMarks: { type: Number }, // Total marks obtained
+        percentage: { type: Number }, // Percentage of marks obtained
+        overallRemarks: { type: String }, // Overall remarks (e.g., pass/fail)
 
         maunAbhyasActivities: {
           mukhyaVishay: [

@@ -8,9 +8,7 @@ const VidnyanmayaKoshaAssessment = ({
   studentData,
   onUpdate,
 }) => {
-  // Initialize with local state to avoid dependency issues
   const [localData, setLocalData] = useState(() => {
-    // Helper function to initialize subjects
     const initializeSubjects = () => {
       return (
         rformat?.subjects?.map((item) => {
@@ -21,20 +19,18 @@ const VidnyanmayaKoshaAssessment = ({
           return {
             id: item.id,
             label: item.label,
-            unit1: existingItem?.unit1 || { total: "25", obtained: "0" },
-            semester1: existingItem?.semester1 || {
-              total: "50",
-              obtained: "0",
+            grade: {
+              sem1: existingItem?.grade?.sem1 || "",
+              sem2: existingItem?.grade?.sem2 || "",
             },
-            unit2: existingItem?.unit2 || { total: "25", obtained: "0" },
-            terminal: existingItem?.terminal || { total: "100", obtained: "0" },
-            grade: existingItem?.grade || "",
+            minimumMarks: existingItem?.minimumMarks || "",
+            sem2obtainedMarks: existingItem?.sem2obtainedMarks || "",
+            remarks: existingItem?.remarks || "",
           };
         }) || []
       );
     };
 
-    // Helper function to initialize maunAbhyas activities
     const initializeMaunAbhyas = () => {
       const result = {};
       if (rformat?.maunAbhyasActivities) {
@@ -59,6 +55,10 @@ const VidnyanmayaKoshaAssessment = ({
 
     return {
       subjects: initializeSubjects(),
+      totalMarks: studentData?.result?.vidnyanmayaKosha?.totalMarks || "",
+      percentage: studentData?.result?.vidnyanmayaKosha?.percentage || "",
+      overallRemarks:
+        studentData?.result?.vidnyanmayaKosha?.overallRemarks || "",
       maunAbhyasActivities: initializeMaunAbhyas(),
       dailyObservations:
         studentData?.result?.vidnyanmayaKosha?.dailyObservations || [],
@@ -67,73 +67,53 @@ const VidnyanmayaKoshaAssessment = ({
     };
   });
 
-  // Calculate grade based on percentage
-  const calculateGrade = (percentage) => {
-    if (percentage >= 90) return "A+";
-    if (percentage >= 80) return "A";
-    if (percentage >= 70) return "B+";
-    if (percentage >= 60) return "B";
-    if (percentage >= 50) return "C";
-    if (percentage >= 35) return "D";
-    return "F";
-  };
-
-  // Handle marks input changes and auto-calculate grades
-  const handleMarksChange = (subjectId, field, type, value) => {
+  const isMiddleSchool =
+    studentData?.standard === "६" || studentData?.standard === "७";
+  const handleMarksChange = (subjectId, field, value) => {
     if (!isEditing) return;
-
-    // Only allow numbers for marks
-    if (type !== "grade" && value !== "" && isNaN(value)) return;
 
     const updatedSubjects = localData.subjects.map((subject) => {
       if (subject.id !== subjectId) return subject;
 
-      const updatedSubject = { ...subject };
-
-      // Update the specific field
-      if (type === "grade") {
-        updatedSubject.grade = value;
-      } else {
-        updatedSubject[field] = {
-          ...updatedSubject[field],
-          [type]: value,
+      // Handle grade updates differently from other fields
+      if (typeof field === "object") {
+        // This is for grade updates (sem1 or sem2)
+        return {
+          ...subject,
+          grade: {
+            ...subject.grade,
+            ...field, // Spread the grade update (either {sem1: value} or {sem2: value})
+          },
         };
-
-        // Auto-calculate grade when marks are entered
-        const exams = ["unit1", "semester1", "unit2", "terminal"];
-        const allExamsHaveMarks = exams.every(
-          (exam) => updatedSubject[exam].total && updatedSubject[exam].obtained
-        );
-
-        if (allExamsHaveMarks) {
-          const totalPossible = exams.reduce(
-            (sum, exam) => sum + parseFloat(updatedSubject[exam].total),
-            0
-          );
-
-          const totalObtained = exams.reduce(
-            (sum, exam) => sum + parseFloat(updatedSubject[exam].obtained),
-            0
-          );
-
-          const percentage = (totalObtained / totalPossible) * 100;
-          updatedSubject.grade = calculateGrade(percentage);
-        }
+      } else {
+        // This is for other fields (minimumMarks, sem2obtainedMarks, remarks)
+        return {
+          ...subject,
+          [field]: value,
+        };
       }
-
-      return updatedSubject;
     });
 
     const updatedData = {
       ...localData,
       subjects: updatedSubjects,
     };
+    setLocalData(updatedData);
+    if (onUpdate) onUpdate(updatedData);
+  };
+
+  const handleTotalPercentageChange = (field, value) => {
+    if (!isEditing) return;
+
+    const updatedData = {
+      ...localData,
+      [field]: value,
+    };
 
     setLocalData(updatedData);
     if (onUpdate) onUpdate(updatedData);
   };
 
-  // Handle Maun Abhyas activity toggle
   const handleActivityToggle = (category, activityId) => {
     if (!isEditing) return;
 
@@ -155,7 +135,6 @@ const VidnyanmayaKoshaAssessment = ({
     if (onUpdate) onUpdate(updatedData);
   };
 
-  // Handle daily observation changes
   const handleDailyObservationsChange = (updatedObservations) => {
     const updatedData = {
       ...localData,
@@ -165,7 +144,6 @@ const VidnyanmayaKoshaAssessment = ({
     if (onUpdate) onUpdate(updatedData);
   };
 
-  // Handle annual activities changes
   const handleAnnualActivitiesChange = (updatedActivities) => {
     const updatedData = {
       ...localData,
@@ -175,12 +153,10 @@ const VidnyanmayaKoshaAssessment = ({
     if (onUpdate) onUpdate(updatedData);
   };
 
-  // If no format is available, show loading or error message
   if (!rformat) {
     return <div className="p-4 text-center">Loading format data...</div>;
   }
 
-  // Render Annual Result section
   const renderAnnualResult = () => (
     <div className="space-y-6 p-5 bg-white rounded-lg shadow-md">
       <h2 className="text-center text-2xl font-bold text-gray-800 mb-6 border-b pb-2">
@@ -191,7 +167,23 @@ const VidnyanmayaKoshaAssessment = ({
           <thead>
             <tr className="bg-gray-100">
               <th className="border border-gray-300 p-2 text-left">विषय</th>
-              <th className="border border-gray-300 p-2 text-left">ग्रेड</th>
+              <th className="border border-gray-300 p-2 text-left">
+                श्रेणी (सेम 1)
+              </th>
+              <th className="border border-gray-300 p-2 text-left">
+                श्रेणी (सेम 2)
+              </th>
+              {!isMiddleSchool && (
+                <>
+                  <th className="border border-gray-300 p-2 text-left">
+                    किमान गुण
+                  </th>
+                  <th className="border border-gray-300 p-2 text-left">
+                    सेम 2 मध्ये प्राप्त गुण
+                  </th>
+                  <th className="border border-gray-300 p-2 text-left">शेरा</th>
+                </>
+              )}
             </tr>
           </thead>
           <tbody>
@@ -202,36 +194,174 @@ const VidnyanmayaKoshaAssessment = ({
                   {isEditing ? (
                     <input
                       type="text"
-                      value={subject.grade || ""}
-                      onChange={(e) => {
-                        const updatedSubjects = localData.subjects.map((sub) =>
-                          sub.id === subject.id
-                            ? { ...sub, grade: e.target.value }
-                            : sub
-                        );
-                        setLocalData({
-                          ...localData,
-                          subjects: updatedSubjects,
-                        });
-                        onUpdate({ ...localData, subjects: updatedSubjects });
-                      }}
+                      value={subject.grade.sem1 || ""}
+                      onChange={(e) =>
+                        handleMarksChange(
+                          subject.id,
+                          { sem1: e.target.value },
+                          e.target.value
+                        )
+                      }
                       className="w-full p-1 border border-gray-300 rounded"
-                      placeholder="ग्रेड टाका"
+                      placeholder="ग्रेड टाका (सेम 1)"
                     />
                   ) : (
-                    <span className="font-semibold">{subject.grade}</span>
+                    <span className="font-semibold">{subject.grade.sem1}</span>
                   )}
                 </td>
+                <td className="border border-gray-300 p-2">
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      value={subject.grade.sem2 || ""}
+                      onChange={(e) =>
+                        handleMarksChange(
+                          subject.id,
+                          { sem2: e.target.value },
+                          e.target.value
+                        )
+                      }
+                      className="w-full p-1 border border-gray-300 rounded"
+                      placeholder="ग्रेड टाका (सेम 2)"
+                    />
+                  ) : (
+                    <span className="font-semibold">{subject.grade.sem2}</span>
+                  )}
+                </td>
+                {!isMiddleSchool && (
+                  <>
+                    <td className="border border-gray-300 p-2">
+                      {isEditing ? (
+                        <input
+                          type="text"
+                          value={subject.minimumMarks || ""}
+                          onChange={(e) =>
+                            handleMarksChange(
+                              subject.id,
+                              "minimumMarks",
+                              e.target.value
+                            )
+                          }
+                          className="w-full p-1 border border-gray-300 rounded"
+                          placeholder="किमान गुण"
+                        />
+                      ) : (
+                        <span className="font-semibold">
+                          {subject.minimumMarks}
+                        </span>
+                      )}
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      {isEditing ? (
+                        <input
+                          type="text"
+                          value={subject.sem2obtainedMarks || ""}
+                          onChange={(e) =>
+                            handleMarksChange(
+                              subject.id,
+                              "sem2obtainedMarks",
+                              e.target.value
+                            )
+                          }
+                          className="w-full p-1 border border-gray-300 rounded"
+                          placeholder="सेम 2 मध्ये प्राप्त गुण"
+                        />
+                      ) : (
+                        <span className="font-semibold">
+                          {subject.sem2obtainedMarks}
+                        </span>
+                      )}
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      {isEditing ? (
+                        <input
+                          type="text"
+                          value={subject.remarks || ""}
+                          onChange={(e) =>
+                            handleMarksChange(
+                              subject.id,
+                              "remarks",
+                              e.target.value
+                            )
+                          }
+                          className="w-full p-1 border border-gray-300 rounded"
+                          placeholder="शेरा"
+                        />
+                      ) : (
+                        <span className="font-semibold">{subject.remarks}</span>
+                      )}
+                    </td>
+                  </>
+                )}
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      {!isMiddleSchool && (
+        <div className="flex flex-wrap gap-4 justify-center items-center mt-4">
+          <div className="flex-1 min-w-[120px]">
+            <label className="block text-gray-700 text-sm font-bold mb-1">
+              एकूण गुण:
+            </label>
+            {isEditing ? (
+              <input
+                type="text"
+                value={localData.totalMarks || ""}
+                onChange={(e) =>
+                  handleTotalPercentageChange("totalMarks", e.target.value)
+                }
+                className="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                placeholder="एकूण गुण"
+              />
+            ) : (
+              <span className="font-semibold">{localData.totalMarks}</span>
+            )}
+          </div>
+
+          <div className="flex-1 min-w-[120px]">
+            <label className="block text-gray-700 text-sm font-bold mb-1">
+              टक्केवारी:
+            </label>
+            {isEditing ? (
+              <input
+                type="text"
+                value={localData.percentage || ""}
+                onChange={(e) =>
+                  handleTotalPercentageChange("percentage", e.target.value)
+                }
+                className="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                placeholder="टक्केवारी"
+              />
+            ) : (
+              <span className="font-semibold">{localData.percentage}</span>
+            )}
+          </div>
+
+          <div className="flex-1 min-w-[200px]">
+            <label className="block text-gray-700 text-sm font-bold mb-1">
+              एकूण शेरा:
+            </label>
+            {isEditing ? (
+              <input
+                type="text"
+                value={localData.overallRemarks || ""}
+                onChange={(e) =>
+                  handleTotalPercentageChange("overallRemarks", e.target.value)
+                }
+                className="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                placeholder="एकूण शेरा (उदा. पास/फेल)"
+              />
+            ) : (
+              <span className="font-semibold">{localData.overallRemarks}</span>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 
-
-  // Render Maun Abhyas section
   const renderMaunAbhyas = () => {
     const categories = [
       { key: "mukhyaVishay", label: "मुख्य विषय" },
@@ -352,7 +482,6 @@ const VidnyanmayaKoshaAssessment = ({
       </div>
     );
   };
-
 
   return (
     <div className="space-y-6">
