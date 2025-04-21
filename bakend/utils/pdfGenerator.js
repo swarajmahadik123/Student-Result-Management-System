@@ -96,7 +96,7 @@ const generateHTML = (studentData) => {
 
   // Base64 encoded logos
   const rightLogo =
-    "https://res.cloudinary.com/dloe8x9e4/image/upload/v1745153175/PANCHKOSHADHARIT_GURUKUL_c28rql.jpg";
+    "https://res.cloudinary.com/dloe8x9e4/image/upload/v1743612669/hindavi_logo_1_zgn1rn.png";
   const leftLogo =
     "https://res.cloudinary.com/dloe8x9e4/image/upload/v1743612669/hindavi_logo_1_zgn1rn.png";
   const watermarkLogo = rightLogo;
@@ -862,11 +862,11 @@ const generateHTML = (studentData) => {
 
   // ... (previous code remains the same until Vidnyanmaya Kosha section)
 
-if (result?.vidnyanmayaKosha) {
-  const isSeventhOrSixthStandard = ["७", "६"].includes(studentData.standard);
-  const isFifthOrEighthStandard = ["५", "८"].includes(studentData.standard);
+  if (result?.vidnyanmayaKosha) {
+    const isSeventhOrSixthStandard = ["७", "६"].includes(studentData.standard);
+    const isFifthOrEighthStandard = ["५", "८"].includes(studentData.standard);
 
-  htmlContent += `
+    htmlContent += `
       <div class="section-container">
         <h2 class="section-title">विज्ञानमयकोश - बौद्धिक विकसन (कल्पना विकास /सूक्ष्म/चेतन/अमूर्त कोश )</h2>
         <div class="section-title">Annual Result</div>
@@ -887,7 +887,7 @@ if (result?.vidnyanmayaKosha) {
                   <th style="width: 55%; text-align: left; padding: 1px; border: 1px solid black;">Subject</th>
                   <th style="width: 35%; text-align: center; padding: 0; border: 1px solid black;">
                     <div style="display: flex; flex-direction: column; height: 100%;">
-                      <span style="padding: 1px 0;">Grade</span>
+                      <span style="">Grade</span>
                       <div style="display: flex; border-top: 1px solid black; margin-top: 1px;">
                         <span style="flex: 1; text-align: center; padding: 1px 0; border-right: 1px solid black;">Sem1</span>
                         <span style="flex: 1; text-align: center; padding: 1px 0;">Sem2</span>
@@ -898,9 +898,9 @@ if (result?.vidnyanmayaKosha) {
               </thead>
               <tbody>`;
 
-  // Add subjects to Table 1
-  result.vidnyanmayaKosha.subjects?.forEach((subject, index) => {
-    htmlContent += `
+    // Add subjects to Table 1
+    result.vidnyanmayaKosha.subjects?.forEach((subject, index) => {
+      htmlContent += `
                 <tr style="height: 18px;">
                   <td style="text-align: center; padding: 1px; border: 1px solid black; vertical-align: middle;">${
                     index + 1
@@ -919,16 +919,16 @@ if (result?.vidnyanmayaKosha) {
                     </div>
                   </td>
                 </tr>`;
-  });
+    });
 
-  htmlContent += `
+    htmlContent += `
               </tbody>
             </table>
           </div>`;
 
-  // Only show Annual Marks table for standards other than 7th and 8th
-  if (!isSeventhOrSixthStandard) {
-    htmlContent += `
+    // Only show Annual Marks table for standards other than 7th and 8th
+    if (!isSeventhOrSixthStandard) {
+      htmlContent += `
           <!-- Table 2: Annual Marks -->
           <div style="width: 38%;">
             <table style="width: 100%; border-collapse: collapse; border: 1px solid black; height: 100%;">
@@ -936,29 +936,26 @@ if (result?.vidnyanmayaKosha) {
                 <tr style="background-color: #f2f2f2; height: 20px;">
                   <th colspan="3" style="text-align: center; padding: 1px; border: 1px solid black;">Annual Marks</th>
                 </tr>
-                <tr style="background-color: #f2f2f2; height: 20px;">
+                <tr style="background-color: #f2f2f2; height: 20px; ">
                   <th style="width: 30%; text-align: center; padding: 1px; border: 1px solid black;">Min Marks</th>
-                  <th style="width: 30%; text-align: center; padding: 1px; border: 1px solid black;">Sem2 Obtained Marks</th>
-                  <th style="width: 40%; text-align: center; padding: 1px; border: 1px solid black;">Remarks</th>
+                  <th style="width: 50%; text-align: center; padding: 1px; border: 1px solid black;">Sem2 obtained Marks</th>
+                  <th style="width: 20%; text-align: center; padding: 1px; border: 1px solid black;">Remarks</th>
                 </tr>
               </thead>
               <tbody style="height: 100%;">`;
 
-    // Add marks to Table 2
-    let totalMinMarks = 0;
-    let totalSem2Marks = 0;
-    const subjectCount = result.vidnyanmayaKosha.subjects?.length || 0;
+      // Add marks to Table 2
+      let totalMinMarks = 0;
+      let totalSem2Marks = 0;
+      const subjectCount = result.vidnyanmayaKosha.subjects?.length || 0;
 
-    // Calculate row height to distribute space evenly
-    const rowHeightForSubjects =
-      subjectCount > 0 ? `calc((100% - 18px) / ${subjectCount})` : "18px";
+      // Using fixed height of 18px for each row to match Academic Examination table
+      result.vidnyanmayaKosha.subjects?.forEach((subject) => {
+        totalMinMarks += Number(subject.minimumMarks) || 0;
+        totalSem2Marks += Number(subject.sem2obtainedMarks) || 0;
 
-    result.vidnyanmayaKosha.subjects?.forEach((subject) => {
-      totalMinMarks += Number(subject.minimumMarks) || 0;
-      totalSem2Marks += Number(subject.sem2obtainedMarks) || 0;
-
-      htmlContent += `
-                <tr style="height: ${rowHeightForSubjects};">
+        htmlContent += `
+                <tr style="height: 19.5px;">
                   <td style="text-align: center; padding: 1px; border: 1px solid black; vertical-align: middle;">${
                     subject.minimumMarks || "-"
                   }</td>
@@ -969,22 +966,22 @@ if (result?.vidnyanmayaKosha) {
                     subject.remarks || "-"
                   }</td>
                 </tr>`;
-    });
+      });
 
-    // Add total row
-    const percentage =
-      result.vidnyanmayaKosha.percentage ||
-      (totalSem2Marks > 0
-        ? Math.round((totalSem2Marks / totalMinMarks) * 100)
-        : 0);
+      // Add total row
+      const percentage =
+        result.vidnyanmayaKosha.percentage ||
+        (totalSem2Marks > 0
+          ? Math.round((totalSem2Marks / totalMinMarks) * 100)
+          : 0);
 
-    // For 5th and 8th standard, show overall remarks in brackets next to percentage
-    const percentageWithRemarks =
-      isFifthOrEighthStandard && result.vidnyanmayaKosha.overallRemarks
-        ? `${percentage}% (${result.vidnyanmayaKosha.overallRemarks})`
-        : `${percentage}%`;
+      // For 5th and 8th standard, show overall remarks in brackets next to percentage
+      const percentageWithRemarks =
+        isFifthOrEighthStandard && result.vidnyanmayaKosha.overallRemarks
+          ? `${percentage}% (${result.vidnyanmayaKosha.overallRemarks})`
+          : `${percentage}%`;
 
-    htmlContent += `
+      htmlContent += `
                 <tr style="height: 18px; font-weight: bold; background-color: #f5f5f5;">
                   <td style="text-align: center; padding: 1px; border: 1px solid black; vertical-align: middle;">Total</td>
                   <td style="text-align: center; padding: 1px; border: 1px solid black; vertical-align: middle;">${
@@ -995,9 +992,9 @@ if (result?.vidnyanmayaKosha) {
               </tbody>
             </table>
           </div>`;
-  }
+    }
 
-  htmlContent += `
+    htmlContent += `
           <!-- Table 3: Grade Range -->
           <table style="width: ${
             isSeventhOrSixthStandard ? "40%" : "24%"
@@ -1047,7 +1044,7 @@ if (result?.vidnyanmayaKosha) {
             </tbody>
           </table>
         </div>`;
-}
+  }
 
   // Daily Observations (remaining code remains the same)
   if (result.vidnyanmayaKosha.dailyObservations?.length > 0) {
