@@ -938,7 +938,7 @@ if (result?.vidnyanmayaKosha) {
                 </tr>
                 <tr style="background-color: #f2f2f2; height: 20px;">
                   <th style="width: 30%; text-align: center; padding: 1px; border: 1px solid black;">Min Marks</th>
-                  <th style="width: 30%; text-align: center; padding: 1px; border: 1px solid black;">Sem2 Marks</th>
+                  <th style="width: 30%; text-align: center; padding: 1px; border: 1px solid black;">Sem2 Obtained Marks</th>
                   <th style="width: 40%; text-align: center; padding: 1px; border: 1px solid black;">Remarks</th>
                 </tr>
               </thead>
