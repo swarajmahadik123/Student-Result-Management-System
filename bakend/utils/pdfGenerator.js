@@ -96,10 +96,10 @@ const generateHTML = (studentData) => {
 
   // Base64 encoded logos
   const rightLogo =
-    "https://res.cloudinary.com/dloe8x9e4/image/upload/v1745153175/PANCHKOSHADHARIT_GURUKUL_c28rql.jpg";
+    "https://res.cloudinary.com/dloe8x9e4/image/upload/v1743612669/hindavi_logo_1_zgn1rn.png";
   const leftLogo =
     "https://res.cloudinary.com/dloe8x9e4/image/upload/v1743612669/hindavi_logo_1_zgn1rn.png";
-  const watermarkLogo = "https://res.cloudinary.com/dloe8x9e4/image/upload/v1743612654/gurukul_logo_xtcv1x.jpg";
+  const watermarkLogo = rightLogo;
 
   const styles = `
     <style>
@@ -1259,6 +1259,22 @@ const generateHTML = (studentData) => {
     htmlContent += `</div>`;
   }
 
+  htmlContent += `
+    <div style="position: absolute; bottom: 20px; left: 0; right: 0; width: 100%; display: flex; justify-content: space-around; padding-top: 10px; ">
+      <div style="text-align: center; width: 30%;">
+        <div style="margin-bottom: 5px;">(सही)</div>
+        <div>वर्गाध्यापक</div>
+      </div>
+      <div style="text-align: center; width: 30%;">
+        <div style="margin-bottom: 5px;">(सही)</div>
+        <div>गुरुकुल प्रमुख</div>
+      </div>
+      <div style="text-align: center; width: 30%;">
+        <div style="margin-bottom: 5px;">(सही)</div>
+        <div>संचालिका</div>
+      </div>
+    </div>
+  `;
   htmlContent += `
         </div>
       </div>
