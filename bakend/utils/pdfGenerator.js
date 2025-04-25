@@ -1260,7 +1260,7 @@ const generateHTML = (studentData) => {
   }
 
   htmlContent += `
-    <div style="position: absolute; bottom: 20px; left: 0; right: 0; width: 100%; display: flex; justify-content: space-around; padding-top: 10px; ">
+    <div style="position: absolute; bottom: 0px; left: 0; right: 0; width: 100%; display: flex; justify-content: space-around; padding-top: 10px; ">
       <div style="text-align: center; width: 30%;">
         <div style="margin-bottom: 5px;">(सही)</div>
         <div>वर्गाध्यापक</div>
